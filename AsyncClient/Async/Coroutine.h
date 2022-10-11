@@ -89,6 +89,7 @@ struct PromiseAsyncOperationBase
 	std::suspend_always final_suspend() noexcept { return {}; }
 	void unhandled_exception() {}
 
+	// TODO should we also support non-movable tasks?
 	// Support co_await of different return types
 	template<class TSubReturnValue>
 	auto await_transform(AsyncTask<TSubReturnValue>&& subTask)
@@ -134,7 +135,6 @@ struct PromiseAsyncOperation<void> : public PromiseAsyncOperationBase<PromiseAsy
 	void return_void() {}
 };
 
-
 /// Task ///
 
 struct AsyncTaskBase
@@ -145,12 +145,19 @@ struct AsyncTaskBase
 
 	}
 
-	AsyncTaskBase(AsyncTaskBase&& task) = default;
+	AsyncTaskBase(AsyncTaskBase&& task) noexcept
+		: mHandle(std::move(task.mHandle))
+		, mSubTask(std::move(task.mSubTask))
+	{
+		// We need to invalidate the original handle to ensure that we call the coroutine destructor only once
+		task.mHandle = nullptr;
+		task.mSubTask = nullptr;
+	};
 
 	// This should also kill subtasks? (virtual?)
 	virtual ~AsyncTaskBase()
 	{
-		// This can be false when we move a coroutine
+		// This can be false when we move a coroutine (i.e. on an awaitable)
 		if (mHandle && mHandle.done())
 		{
 			mHandle.destroy();
@@ -188,6 +195,7 @@ struct AsyncTaskBase
 		return Resume();
 	}
 
+	// "Strong" handle, will destroy couroutine when tasks is destroy. Need to ensure we only have one.
 	std::coroutine_handle<> mHandle;
 	AsyncTaskBase* mSubTask = nullptr;
 };
@@ -207,13 +215,12 @@ struct AsyncTask : public AsyncTaskBase
 
 	AsyncTask(AsyncTask&& other) noexcept
 		: AsyncTaskBase(std::move(other))
+		, mHandleWithPromise(std::move(other.mHandleWithPromise))
+		, mResult(std::move(other.mResult))
 	{
-		other.mHandleWithPromise.promise().mAsyncTask = this;
-
 		// When moving the async task into the awaitable, we need to update the address stored in the promise.
 		// TODO This is kinda ugly since we keep two handles though, there must be a better way.
-		mHandleWithPromise = std::move(other.mHandleWithPromise);
-		mResult = std::move(other.mResult);
+		mHandleWithPromise.promise().mAsyncTask = this;
 	}
 
 	bool HasResult() const
@@ -227,8 +234,9 @@ struct AsyncTask : public AsyncTaskBase
 		return mResult.value_or(TReturnValue{});
 	}
 
-	std::optional<TReturnValue> mResult;
+	// "Weak" handle, i.e. doesn't destroy couroutine when out of scope
 	handle_type mHandleWithPromise;	// Useful for accessing the promise on a derived task
+	std::optional<TReturnValue> mResult;
 };
 
 template <>
@@ -246,13 +254,13 @@ struct AsyncTask<void> : public AsyncTaskBase
 
 	AsyncTask(AsyncTask&& other) noexcept
 		: AsyncTaskBase(std::move(other))
+		, mHandleWithPromise(std::move(other.mHandleWithPromise))
 	{
-		other.mHandleWithPromise.promise().mAsyncTask = this;
-
 		// When moving the async task into the awaitable, we need to update the address stored in the promise.
 		// TODO This is kinda ugly since we keep two handles though, there must be a better way.
-		mHandleWithPromise = std::move(other.mHandleWithPromise);
+		mHandleWithPromise.promise().mAsyncTask = this;
 	}
 
+	// "Weak" handle, i.e. doesn't destroy couroutine when out of scope
 	handle_type mHandleWithPromise;	// Useful for accessing the promise on a derived task
 };

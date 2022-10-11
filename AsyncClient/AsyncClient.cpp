@@ -2,12 +2,6 @@
 //
 
 #include <iostream>
-#include <future>
-#include <coroutine>
-
-#include "Async/AsyncOperation.h"
-#include "Async/Coroutine.h"
-
 #include "Async/AsyncCoroutineOperation.h"
 
 using namespace std::chrono_literals;
@@ -28,7 +22,7 @@ AsyncTask<float> testCoroutine2()
     float result1 = co_await StartAsyncCoroutineOperation<TestOperation2>(1.0f);
     result1 += 1.0f;
     float result2 = co_await StartAsyncCoroutineOperation<TestOperation2>(result1);
-    int result3 = co_await StartAsyncCoroutineOperation<TestOperation1>();
+    int result3 = co_await StartAsyncCoroutineOperation<TestOperation1>();  // This could be done in parallel since it doesn't depend on the previous ops.
 
     co_return result2+result3;
 }
@@ -36,7 +30,6 @@ AsyncTask<float> testCoroutine2()
 // Parallel coroutine with return type
 AsyncTask<float> testCoroutineParallel()
 {
-    // TODO: make a single coroutine for this?
     auto operation1 = StartAsyncCoroutineOperation<TestOperation2>(1.0f);
     auto operation2 = StartAsyncCoroutineOperation<TestOperation2>(1.0f);
 
@@ -46,7 +39,7 @@ AsyncTask<float> testCoroutineParallel()
         operation1();
         operation2();
         if (operation1.IsFinished() && operation2.IsFinished())
-            break; // Could do co_return here too
+            break; // Could do co_return here
 
         co_await std::suspend_always{};
     } 
@@ -54,7 +47,7 @@ AsyncTask<float> testCoroutineParallel()
     co_return operation1.GetResult() + operation2.GetResult();
 }
 
-// Parallel coroutine usign weird templated functions
+// Parallel coroutines usign templated functions (No return)
 AsyncTask<> testCoroutineParallel2()
 {
     auto operation1 = StartAsyncCoroutineOperation<TestOperation1>();
@@ -73,6 +66,7 @@ AsyncTask<> testCoroutineParallel2()
 
 int main()
 {
+    // TODO: coroutine manager to run all this tasks in an easy way
     auto operationtest = testCoroutine2();
     
     while (!operationtest.IsFinished())
@@ -98,62 +92,5 @@ int main()
     std::cout << "Parallel task function done\n";
 
     return 0;
-    /*
-    // Both start here, we need to tick them to know when they finish
-    auto operation1 = StartAsyncCoroutineOperation<TestOperation1>();
-    auto operation2 = StartAsyncCoroutineOperation<TestOperation2>(0.5f);
-
-    // Wait for operations to finish
-    while (!operation1.IsFinished())
-    {
-        operation1();
-    }
-    std::cout << operation1.GetResult() << "\n";
-
-    while (!operation2.IsFinished())
-    {
-        operation2();
-    }
-    std::cout << operation2.GetResult() << "\n";
-
-    
-    ExecuteAsyncCoroutineOperation<TestOperation2>(2.0f);
-
-    auto testOperation1Task = CreateAsyncCoroutineOperation<TestOperation1>();
-
-    while (!testOperation1Task.IsFinished())
-    {
-        testOperation1Task();
-    }
-    const auto resultCoOp1 = testOperation1Task.GetResult();
-    std::cout << resultCoOp1 << "\n";
-
-    AsyncTask c = testCoroutine();
-    while (!c.IsFinished())
-    {
-        c();
-    }
-    const float resultCo = c.GetResult();
-    std::cout << resultCo << "\n";
-
-    auto asyncResult1 = TestOperation1::ExecuteOperation();
-
-    while (asyncResult1.wait_for(0s) != std::future_status::ready)
-    {
-        // wait
-    }
-
-    const auto result1 = asyncResult1.get();
-    std::cout << result1 << "\n";
-
-    auto asyncResult2 = TestOperation2::ExecuteOperation(0.5f);
-
-    while (asyncResult2.wait_for(0s) != std::future_status::ready)
-    {
-        // wait
-    }
-
-    const auto result2 = asyncResult2.get();
-    std::cout << result2 << "\n";
-    */
 }
+
