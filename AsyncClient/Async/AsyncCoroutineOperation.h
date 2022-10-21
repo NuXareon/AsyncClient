@@ -1,7 +1,10 @@
 #pragma once
 
+#include <iostream>
+
 #include "AsyncOperation.h"
 #include "Coroutine.h"
+#include "../Utils.h"
 
 template <class T>
 class OnlineAsyncOperation : AsyncOperation<T, bool>
@@ -10,8 +13,12 @@ class OnlineAsyncOperation : AsyncOperation<T, bool>
 };
 
 template <class AsyncOperation, class ... Args>
-AsyncTask<typename AsyncOperation::return_type> StartAsyncCoroutineOperation(Args ... args)
+AsyncTask<typename AsyncOperation::async_return_type> StartAsyncCoroutineOperation(Args ... args)
 {
+    using namespace std::chrono_literals;
+
+    DebugLog("Operation Start\n");
+
     auto asyncResult = AsyncOperation::ExecuteOperation(std::forward<Args...>(args)...);
 
     while (asyncResult.wait_for(0s) != std::future_status::ready)
@@ -19,7 +26,7 @@ AsyncTask<typename AsyncOperation::return_type> StartAsyncCoroutineOperation(Arg
         co_await std::suspend_always{};
     }
 
-    std::cout << "OperationSuccessful\n";
+    DebugLog("Operation Finished\n");
 
     co_return asyncResult.get();
 }

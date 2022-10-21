@@ -139,6 +139,19 @@ struct PromiseAsyncOperation<void> : public PromiseAsyncOperationBase<PromiseAsy
 
 struct AsyncTaskBase
 {
+	AsyncTaskBase() = default;
+	AsyncTaskBase& operator= (AsyncTaskBase&& other) noexcept
+	{
+		mHandle = std::move(other.mHandle);
+		mSubTask = std::move(other.mSubTask);
+
+		// We need to invalidate the original handle to ensure that we call the coroutine destructor only once
+		other.mHandle = nullptr;
+		other.mSubTask = nullptr;
+
+		return *this;
+	}
+
 	AsyncTaskBase(std::coroutine_handle<> h)
 		: mHandle(h)
 	{
@@ -152,7 +165,7 @@ struct AsyncTaskBase
 		// We need to invalidate the original handle to ensure that we call the coroutine destructor only once
 		task.mHandle = nullptr;
 		task.mSubTask = nullptr;
-	};
+	}
 
 	// This should also kill subtasks? (virtual?)
 	virtual ~AsyncTaskBase()
@@ -206,6 +219,19 @@ struct AsyncTask : public AsyncTaskBase
 	using promise_type = PromiseAsyncOperation<TReturnValue>;
 	using handle_type = std::coroutine_handle<promise_type>;
 
+	// TODO: This should move the object correctly
+	AsyncTask() = default;
+	AsyncTask& operator= (AsyncTask&& other) noexcept
+	{
+		AsyncTaskBase::operator=(std::move(other));
+
+		mHandleWithPromise = std::move(other.mHandleWithPromise);
+		mResult = std::move(other.mResult);
+
+		mHandleWithPromise.promise().mAsyncTask = this;
+		return *this;
+	};
+
 	AsyncTask(handle_type h)
 		: AsyncTaskBase(h)
 	{
@@ -244,6 +270,15 @@ struct AsyncTask<void> : public AsyncTaskBase
 {
 	using promise_type = PromiseAsyncOperation<void>;
 	using handle_type = std::coroutine_handle<promise_type>;
+
+	AsyncTask() = default;
+	AsyncTask& operator= (AsyncTask&& other) noexcept
+	{
+		AsyncTaskBase::operator=(std::move(other));
+		mHandleWithPromise = std::move(other.mHandleWithPromise);
+		mHandleWithPromise.promise().mAsyncTask = this;
+		return *this;
+	};
 
 	AsyncTask(handle_type h)
 		: AsyncTaskBase(h)

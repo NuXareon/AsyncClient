@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Async/AsyncCoroutineOperation.h"
+#include "UI\DisplayBooksByYearUI.h"
 
 using namespace std::chrono_literals;
 
@@ -19,12 +20,12 @@ AsyncTask<> testCoroutine1()
 AsyncTask<float> testCoroutine2()
 {
     co_await testCoroutine1(); // no return type
-    float result1 = co_await StartAsyncCoroutineOperation<TestOperation2>(1.0f);
-    result1 += 1.0f;
-    float result2 = co_await StartAsyncCoroutineOperation<TestOperation2>(result1);
-    int result3 = co_await StartAsyncCoroutineOperation<TestOperation1>();  // This could be done in parallel since it doesn't depend on the previous ops.
+    auto result1 = co_await StartAsyncCoroutineOperation<TestOperation2>(1.0f);
+    result1.mReturnValue += 1.0f;
+    auto result2 = co_await StartAsyncCoroutineOperation<TestOperation2>(result1.mReturnValue);
+    auto result3 = co_await StartAsyncCoroutineOperation<TestOperation1>();  // This could be done in parallel since it doesn't depend on the previous ops.
 
-    co_return result2+result3;
+    co_return result2.mReturnValue + result3.mReturnValue;
 }
 
 // Parallel coroutine with return type
@@ -44,7 +45,7 @@ AsyncTask<float> testCoroutineParallel()
         co_await std::suspend_always{};
     } 
 
-    co_return operation1.GetResult() + operation2.GetResult();
+    co_return operation1.GetResult().mReturnValue + operation2.GetResult().mReturnValue;
 }
 
 // Parallel coroutines usign templated functions (No return)
@@ -64,11 +65,11 @@ AsyncTask<> testCoroutineParallel2()
     co_return;
 }
 
-int main()
+void ExecuteCoroutineTest()
 {
     // TODO: coroutine manager to run all this tasks in an easy way
     auto operationtest = testCoroutine2();
-    
+
     while (!operationtest.IsFinished())
     {
         operationtest();
@@ -90,6 +91,33 @@ int main()
         operationtestparallelfunct();
     }
     std::cout << "Parallel task function done\n";
+}
+
+void ExecuteBookExample()
+{
+    DisplayBooksByYearUI bookUI;
+    long long frameCount = 0;
+    bool runSimulation = true;
+
+    bookUI.Start();
+
+    while (runSimulation)
+    {
+        runSimulation &= bookUI.Tick(frameCount);
+
+        // ~60fps (minus UI tick)
+        constexpr auto sleepTime = std::chrono::milliseconds(static_cast<int>(1000.0f / 60.0f));
+        std::this_thread::sleep_for(sleepTime);
+        ++frameCount;
+    }
+
+    bookUI.End();
+}
+
+int main()
+{
+    //ExecuteCoroutineTest();
+    ExecuteBookExample();
 
     return 0;
 }
