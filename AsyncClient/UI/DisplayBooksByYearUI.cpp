@@ -31,7 +31,7 @@ AsyncTask<> DisplayBooksByYearUI::FetchBookData()
 	auto availableBookIds = co_await StartAsyncCoroutineOperation<GetAvailableBooksOperation>();
 	if (!availableBookIds.HasSuccess())
 	{
-		std::cout << "Error retrieving availabe books: %d" << availableBookIds.mResponseCode << std::endl;
+		std::cout << "Error retrieving availabe books: " << availableBookIds.mResponseCode << std::endl;
 		co_return;
 	}
 	auto bookInfo = co_await StartAsyncCoroutineOperation<GetBookInfoOperation>(availableBookIds.mReturnValue);

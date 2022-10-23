@@ -17,7 +17,7 @@
 *.dll
 
 # Fortran module files
-*.mod
+# *.mod # needed for GO server
 *.smod
 
 # Compiled Static libraries
