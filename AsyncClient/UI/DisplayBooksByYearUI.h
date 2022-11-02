@@ -20,7 +20,8 @@ public:
 private:
 	AsyncTask<void> FetchBookData(int year);
 	std::size_t FilterBookInfoByYear(std::map<std::string, BookInfo>& bookData, int year) const;
-	
+	void DisplayBookData(const std::map<std::string, BookInfo>& bookData, const std::map<std::string, std::string>& bookCollection) const;
+
 private:
 	AsyncTask<void> mFetchBookOperation;
 };

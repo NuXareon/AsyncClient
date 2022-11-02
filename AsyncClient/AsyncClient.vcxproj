@@ -155,13 +155,16 @@
   <ItemGroup>
     <ClInclude Include="Async\AsyncCoroutineOperation.h" />
     <ClInclude Include="Async\AsyncOperation.h" />
+    <ClInclude Include="Async\BookOperations.h" />
     <ClInclude Include="Async\Coroutine.h" />
+    <ClInclude Include="BookTypes.h" />
     <ClInclude Include="UI\DisplayBooksByYearUI.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsyncClient.cpp" />
     <ClCompile Include="Async\AsyncOperation.cpp" />
+    <ClCompile Include="Async\BookOperations.cpp" />
     <ClCompile Include="UI\DisplayBooksByYearUI.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

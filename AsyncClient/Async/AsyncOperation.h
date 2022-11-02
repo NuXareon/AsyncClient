@@ -68,8 +68,9 @@ protected:
 		else
 		{
 			nlohmann::json retunValue = nlohmann::json::parse(httpResponse.body, nullptr, false);
-			std::cout << retunValue << "\n";
-			//DebugLog("Response code: %d\n", httpResponse.code);
+#if _DEBUG
+			std::cout << "Response (" << httpResponse.code << ") - " << retunValue << "\n";
+#endif // !
 			return async_return_type{ httpResponse.code, retunValue.get<return_type>() };
 		}
 	}
@@ -82,7 +83,6 @@ protected:
 	}
 };
 
-// TODO move all of this to their own files..
 class TestOperation1 : public AsyncOperation<TestOperation1, int>
 {
 public:
@@ -95,26 +95,4 @@ class TestOperation2 : public AsyncOperation<TestOperation2, float>
 public:
 
 	static async_return_type StartOperation(float increment);
-};
-
-class GetAvailableBooksOperation : public AsyncOperation<GetAvailableBooksOperation, std::vector<std::string>>
-{
-public:
-	static async_return_type StartOperation();
-};
-
-// TODO move this somewhere more relevant
-struct BookInfo
-{
-	std::string title;
-	std::string author;
-	int year;
-
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(BookInfo, title, author, year);
-};
-
-class GetBookInfoOperation : public AsyncOperation<GetBookInfoOperation, std::map<std::string, BookInfo>>
-{
-public:
-	static async_return_type StartOperation(std::vector<std::string> bookIds);
 };

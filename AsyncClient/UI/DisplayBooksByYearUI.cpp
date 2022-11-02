@@ -2,7 +2,7 @@
 
 // TODO: make paths absolute
 #include "../Utils.h"
-#include "../Async/AsyncOperation.h"
+#include "../Async/BookOperations.h"
 #include "../Async/AsyncCoroutineOperation.h"
 
 #include <iostream>
@@ -11,6 +11,8 @@ void DisplayBooksByYearUI::Start()
 {
 	DebugLog("Starting UI\n");
 	mFetchBookOperation = FetchBookData(YEAR_TO_FILTER);
+
+	std::cout << "Diplaying data for available books release on " << YEAR_TO_FILTER << std::endl;
 }
 
 bool DisplayBooksByYearUI::Tick(long long frameCount)
@@ -51,7 +53,16 @@ AsyncTask<> DisplayBooksByYearUI::FetchBookData(int year)
 	{
 		filteredBookIds.push_back(bookEntry.first);
 	}
-	//auto bookCollection = co_await StartAsyncCoroutineOperation<GetBookCollectionOperation>(filteredBookIds);
+	auto bookCollection = co_await StartAsyncCoroutineOperation<GetBookCollectionOperation>(filteredBookIds);
+
+	if (!bookCollection.HasSuccess())
+	{
+		std::cout << "Error retrieving book collection: " << bookCollection.mResponseCode << std::endl;
+		co_return;
+	}
+
+	DisplayBookData(bookData, bookCollection.mReturnValue);
+
 	co_return;
 }
 
@@ -61,4 +72,19 @@ std::size_t DisplayBooksByYearUI::FilterBookInfoByYear(std::map<std::string, Boo
 		{
 			return item.second.year != year;
 		});
+}
+
+void DisplayBooksByYearUI::DisplayBookData(const std::map<std::string, BookInfo>& bookData, const std::map<std::string, std::string>& bookCollection) const
+{
+	std::cout << bookData.size() << " books foud:" << std::endl;
+	for (const auto& book : bookData)
+	{
+		std::cout << book.second.title << " (" << book.second.year << ")" << " by " << book.second.author;
+		const auto it = bookCollection.find(book.second.title);
+		if (it != bookCollection.end())
+		{
+			std::cout << " (Part of '" << it->second << "' collection)";
+		}
+		std::cout << std::endl;
+	}
 }
