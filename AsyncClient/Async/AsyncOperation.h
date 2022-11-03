@@ -70,7 +70,13 @@ protected:
 			nlohmann::json retunValue = nlohmann::json::parse(httpResponse.body, nullptr, false);
 #if _DEBUG
 			std::cout << "Response (" << httpResponse.code << ") - " << retunValue << "\n";
-#endif // !
+#endif
+			if (retunValue.is_discarded())
+			{
+				// Invalid return value - most likely a backend error. Trying to get the json value in this state would result in an exception/crash.
+				return ReturnErrorCode( httpResponse.code );
+			}
+
 			return async_return_type{ httpResponse.code, retunValue.get<return_type>() };
 		}
 	}

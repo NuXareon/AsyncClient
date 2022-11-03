@@ -3,6 +3,8 @@
 #include <coroutine>
 #include <optional>
 
+#include "../Utils.h"
+
 template <class T> struct PromiseAsyncOperation;
 template <class T> struct AsyncTask;
 struct AsyncTaskBase;
@@ -256,6 +258,7 @@ struct AsyncTask : public AsyncTaskBase
 
 	TReturnValue GetResult() const
 	{
+		ValidateLog(HasResult(), "No result available from coroutine.");
 		//return *mResult; // Faster, but could crash. Ideally we want to report if the value is not ready somehow.
 		return mResult.value_or(TReturnValue{});
 	}
