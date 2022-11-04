@@ -17,7 +17,6 @@ void DisplayBooksByYearUI::Start()
 
 bool DisplayBooksByYearUI::Tick(long long frameCount)
 {
-	// TODO: make debug text
 	DebugLog("Ticking UI (%lld)\n", frameCount);
 	mFetchBookOperation.Resume();
 	return !mFetchBookOperation.IsFinished();
@@ -30,6 +29,7 @@ void DisplayBooksByYearUI::End()
 
 AsyncTask<> DisplayBooksByYearUI::FetchBookData(int year)
 {
+	// First fetch, function will resume when we have a result from backend (or an error happens)
 	auto availableBookIds = co_await StartAsyncCoroutineOperation<GetAvailableBooksOperation>();
 	if (!availableBookIds.HasSuccess())
 	{
@@ -37,6 +37,7 @@ AsyncTask<> DisplayBooksByYearUI::FetchBookData(int year)
 		co_return;
 	}
 
+	// Use the previous value to perform the next query
 	auto bookInfo = co_await StartAsyncCoroutineOperation<GetBookInfoOperation>(availableBookIds.mReturnValue);
 	if (!bookInfo.HasSuccess())
 	{
@@ -44,6 +45,7 @@ AsyncTask<> DisplayBooksByYearUI::FetchBookData(int year)
 		co_return;
 	}
 
+	// Transform obtained data
 	auto& bookData = bookInfo.mReturnValue;
 	[[maybe_unused]] auto filteredCount = FilterBookInfoByYear(bookData, year);
 	DebugLog("Filtered %zd books not matching the date. \n", filteredCount);
@@ -53,16 +55,28 @@ AsyncTask<> DisplayBooksByYearUI::FetchBookData(int year)
 	{
 		filteredBookIds.push_back(bookEntry.first);
 	}
-	auto bookCollection = co_await StartAsyncCoroutineOperation<GetBookCollectionOperation>(filteredBookIds);
+
+	// Run two operations in parallel
+	auto getBookCollectionOp = StartAsyncCoroutineOperation<GetBookCollectionOperation>(filteredBookIds);
+	auto getBookPublisherOperation = StartAsyncCoroutineOperation<GetBookPublisherOperation>(filteredBookIds);
+	co_await ExecuteParallelOperations(getBookCollectionOp, getBookPublisherOperation);
+
+	auto bookCollection = getBookCollectionOp.GetResult();
+	auto bookPublisher = getBookPublisherOperation.GetResult();
 
 	if (!bookCollection.HasSuccess())
 	{
 		std::cout << "Error retrieving book collection: " << bookCollection.mResponseCode << std::endl;
 		co_return;
 	}
+	if (!bookPublisher.HasSuccess())
+	{
+		std::cout << "Error retrieving book publisher: " << bookPublisher.mResponseCode << std::endl;
+		co_return;
+	}
 
-	DisplayBookData(bookData, bookCollection.mReturnValue);
-
+	DisplayBookData(bookData, bookCollection.mReturnValue, bookPublisher.mReturnValue);
+	
 	co_return;
 }
 
@@ -74,16 +88,26 @@ std::size_t DisplayBooksByYearUI::FilterBookInfoByYear(std::map<std::string, Boo
 		});
 }
 
-void DisplayBooksByYearUI::DisplayBookData(const std::map<std::string, BookInfo>& bookData, const std::map<std::string, std::string>& bookCollection) const
+void DisplayBooksByYearUI::DisplayBookData(const std::map<std::string, BookInfo>& bookData, const std::map<std::string, std::string>& bookCollection, const std::map<std::string, std::string>& bookPublisher) const
 {
 	std::cout << bookData.size() << " books foud:" << std::endl;
 	for (const auto& book : bookData)
 	{
 		std::cout << book.second.title << " (" << book.second.year << ")" << " by " << book.second.author;
-		const auto it = bookCollection.find(book.second.title);
-		if (it != bookCollection.end())
+		const auto itCollection = bookCollection.find(book.second.title);
+		if (itCollection != bookCollection.end())
 		{
-			std::cout << " (Part of '" << it->second << "' collection)";
+			std::cout << " (Part of '" << itCollection->second << "')";
+		}
+		std::cout << " - Published by: ";
+		const auto itPublisher = bookPublisher.find(book.second.title);
+		if (itPublisher != bookPublisher.end())
+		{
+			std::cout << itPublisher->second;
+		}
+		else
+		{
+			std::cout << "<No Publisher>";
 		}
 		std::cout << std::endl;
 	}

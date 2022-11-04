@@ -20,3 +20,9 @@ class GetBookCollectionOperation : public AsyncOperation<GetBookCollectionOperat
 public:
 	static async_return_type StartOperation(const std::vector<std::string>& bookIds);
 };
+
+class GetBookPublisherOperation : public AsyncOperation<GetBookPublisherOperation, std::map<std::string, std::string>>
+{
+public:
+	static async_return_type StartOperation(const std::vector<std::string>& bookIds);
+};

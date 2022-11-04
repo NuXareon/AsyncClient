@@ -46,3 +46,22 @@ GetBookCollectionOperation::async_return_type GetBookCollectionOperation::StartO
 	RestClient::Response r = RestClient::get(query);
 	return ParseReturnValue(r);
 }
+
+GetBookPublisherOperation::async_return_type GetBookPublisherOperation::StartOperation(const std::vector<std::string>& bookIds)
+{
+	DebugLog("GetBookPublisherOperation Start\n");
+	if (bookIds.empty())
+	{
+		DebugLog("Empty book list found when calling GetBookPublisherOperation, canceling operation.");
+		return ReturnErrorCode();
+	}
+
+	std::string query = "http://localhost:8080/books/publishers/book?";
+	for (const std::string& id : bookIds)
+	{
+		query += "ids=" + id + "&";
+	}
+
+	RestClient::Response r = RestClient::get(query);
+	return ParseReturnValue(r);
+}
