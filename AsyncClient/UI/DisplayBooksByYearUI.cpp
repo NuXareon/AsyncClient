@@ -19,6 +19,11 @@ bool DisplayBooksByYearUI::Tick(long long frameCount)
 {
 	DebugLog("Ticking UI (%lld)\n", frameCount);
 	mFetchBookOperation.Resume();
+	if (mFetchBookOperation.HasResult() && mFetchBookOperation.GetResult() == false)
+	{
+		std::cout << "Failed to display book data" << std::endl;
+		return false;	// Close the UI
+	}
 	return !mFetchBookOperation.IsFinished();
 }
 
@@ -27,22 +32,22 @@ void DisplayBooksByYearUI::End()
 	DebugLog("Closing UI\n");
 }
 
-AsyncTask<> DisplayBooksByYearUI::FetchBookData(int year)
+Async::Task<bool> DisplayBooksByYearUI::FetchBookData(int year)
 {
 	// First fetch, function will resume when we have a result from backend (or an error happens)
-	auto availableBookIds = co_await StartAsyncCoroutineOperation<GetAvailableBooksOperation>();
+	auto availableBookIds = co_await Async::RunOperation<GetAvailableBooksOperation>();
 	if (!availableBookIds.HasSuccess())
 	{
 		std::cout << "Error retrieving availabe books: " << availableBookIds.mResponseCode << std::endl;
-		co_return;
+		co_return false;
 	}
 
 	// Use the previous value to perform the next query
-	auto bookInfo = co_await StartAsyncCoroutineOperation<GetBookInfoOperation>(availableBookIds.mReturnValue);
+	auto bookInfo = co_await Async::RunOperation<GetBookInfoOperation>(availableBookIds.mReturnValue);
 	if (!bookInfo.HasSuccess())
 	{
 		std::cout << "Error retrieving book info: " << bookInfo.mResponseCode << std::endl;
-		co_return;
+		co_return false;
 	}
 
 	// Transform obtained data
@@ -57,9 +62,9 @@ AsyncTask<> DisplayBooksByYearUI::FetchBookData(int year)
 	}
 
 	// Run two operations in parallel
-	auto getBookCollectionOp = StartAsyncCoroutineOperation<GetBookCollectionOperation>(filteredBookIds);
-	auto getBookPublisherOperation = StartAsyncCoroutineOperation<GetBookPublisherOperation>(filteredBookIds);
-	co_await ExecuteParallelOperations(getBookCollectionOp, getBookPublisherOperation);
+	auto getBookCollectionOp = Async::RunOperation<GetBookCollectionOperation>(filteredBookIds);
+	auto getBookPublisherOperation = Async::RunOperation<GetBookPublisherOperation>(filteredBookIds);
+	co_await Async::RunOperationsParallel(getBookCollectionOp, getBookPublisherOperation);
 
 	auto bookCollection = getBookCollectionOp.GetResult();
 	auto bookPublisher = getBookPublisherOperation.GetResult();
@@ -67,17 +72,17 @@ AsyncTask<> DisplayBooksByYearUI::FetchBookData(int year)
 	if (!bookCollection.HasSuccess())
 	{
 		std::cout << "Error retrieving book collection: " << bookCollection.mResponseCode << std::endl;
-		co_return;
+		co_return false;
 	}
 	if (!bookPublisher.HasSuccess())
 	{
 		std::cout << "Error retrieving book publisher: " << bookPublisher.mResponseCode << std::endl;
-		co_return;
+		co_return false;
 	}
 
 	DisplayBookData(bookData, bookCollection.mReturnValue, bookPublisher.mReturnValue);
 	
-	co_return;
+	co_return true;
 }
 
 std::size_t DisplayBooksByYearUI::FilterBookInfoByYear(std::map<std::string, BookInfo>& bookData, int year) const

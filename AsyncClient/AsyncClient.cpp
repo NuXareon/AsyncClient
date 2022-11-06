@@ -8,7 +8,7 @@
 using namespace std::chrono_literals;
 
 // Coroutine with no return type
-AsyncTask<> testCoroutine1()
+Async::Task<> testCoroutine1()
 {
     std::cout << "Im a coroutine \n";
     co_await std::suspend_always{};
@@ -17,22 +17,22 @@ AsyncTask<> testCoroutine1()
 }
 
 // Sequential coroutine with return type
-AsyncTask<float> testCoroutine2()
+Async::Task<float> testCoroutine2()
 {
     co_await testCoroutine1(); // no return type
-    auto result1 = co_await StartAsyncCoroutineOperation<TestOperation2>(1.0f);
+    auto result1 = co_await Async::RunOperation<TestOperation2>(1.0f);
     result1.mReturnValue += 1.0f;
-    auto result2 = co_await StartAsyncCoroutineOperation<TestOperation2>(result1.mReturnValue);
-    auto result3 = co_await StartAsyncCoroutineOperation<TestOperation1>();  // This could be done in parallel since it doesn't depend on the previous ops.
+    auto result2 = co_await Async::RunOperation<TestOperation2>(result1.mReturnValue);
+    auto result3 = co_await Async::RunOperation<TestOperation1>();  // This could be done in parallel since it doesn't depend on the previous ops.
 
     co_return result2.mReturnValue + result3.mReturnValue;
 }
 
 // Parallel coroutine with return type
-AsyncTask<float> testCoroutineParallel()
+Async::Task<float> testCoroutineParallel()
 {
-    auto operation1 = StartAsyncCoroutineOperation<TestOperation2>(1.0f);
-    auto operation2 = StartAsyncCoroutineOperation<TestOperation2>(1.0f);
+    auto operation1 = Async::RunOperation<TestOperation2>(1.0f);
+    auto operation2 = Async::RunOperation<TestOperation2>(1.0f);
 
     // Doing the loop this ways avoids waiting and extra frame at the end of the operations
     while (true)
@@ -49,18 +49,18 @@ AsyncTask<float> testCoroutineParallel()
 }
 
 // Parallel coroutines usign templated functions (No return)
-AsyncTask<> testCoroutineParallel2()
+Async::Task<> testCoroutineParallel2()
 {
-    auto operation1 = StartAsyncCoroutineOperation<TestOperation1>();
-    auto operation2 = StartAsyncCoroutineOperation<TestOperation2>(1.0f);
-    auto operation3 = StartAsyncCoroutineOperation<TestOperation1>();
-    auto operation4 = StartAsyncCoroutineOperation<TestOperation1>();
-    auto operation5 = StartAsyncCoroutineOperation<TestOperation2>(2.0f);
-    auto operation6 = StartAsyncCoroutineOperation<TestOperation2>(6.0f);
+    auto operation1 = Async::RunOperation<TestOperation1>();
+    auto operation2 = Async::RunOperation<TestOperation2>(1.0f);
+    auto operation3 = Async::RunOperation<TestOperation1>();
+    auto operation4 = Async::RunOperation<TestOperation1>();
+    auto operation5 = Async::RunOperation<TestOperation2>(2.0f);
+    auto operation6 = Async::RunOperation<TestOperation2>(6.0f);
 
-    co_await ExecuteParallelOperations(operation1, operation2);
+    co_await Async::RunOperationsParallel(operation1, operation2);
 
-    co_await ExecuteParallelOperations(operation3, operation4, operation5, operation6);
+    co_await Async::RunOperationsParallel(operation3, operation4, operation5, operation6);
 
     co_return;
 }
