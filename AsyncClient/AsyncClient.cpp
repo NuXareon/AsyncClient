@@ -116,8 +116,31 @@ void ExecuteBookExample()
 
 int main()
 {
-    //ExecuteCoroutineTest();
-    ExecuteBookExample();
+    while (1)
+    {
+        std::cout << "0 - Run Coroutine Test" << std::endl << "1 - Book UI" << std::endl;
+        std::cout << "Waiting for input: ";
+        int inputOption;
+        std::cin >> inputOption;
+        std::cout << std::endl;
+
+        switch (inputOption)
+        {
+        case 0:
+        {
+            return 0;
+        }
+        case 1:
+        {
+            ExecuteCoroutineTest();
+        }
+        case 2:
+        {
+            ExecuteBookExample();
+        }
+        }
+        std::cout << std::endl;
+    }
 
     return 0;
 }
