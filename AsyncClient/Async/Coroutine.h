@@ -7,227 +7,232 @@
 
 namespace Async
 {
-	template <class T> struct PromiseAsyncOperation;
 	template <class T> struct Task;
-	struct AsyncTaskBase;
 
-	/// Awaitable ///
-
-	// We need to separate this to allow transformations for different promise return types
-	template <class TReturnValue, typename TPromise>
-	struct AwaitableAsyncOperationBase
+	namespace Private
 	{
-		AwaitableAsyncOperationBase(Task<TReturnValue>&& subTask)
-			: mTask(std::move(subTask))
+		template <class T> struct TaskPromise;
+		struct TaskBase;
+
+		/// Awaitable ///
+
+		// We need to separate this to allow transformations for different promise return types
+		template <class TReturnValue, typename TPromise>
+		struct TaksAwaitableBase
 		{
-
-		}
-
-		// Support co_await
-		bool await_ready()
-		{
-			return mTask.IsFinished();
-		}
-
-		// true = suspend, false = resume
-		bool await_suspend(std::coroutine_handle<TPromise> currentTaskHandle)
-		{
-			// Set up and execute subtask when calling co_await on a AsyncTask
-			// TODO We should probably use share pointers for safety
-			auto* currentTask = currentTaskHandle.promise().mAsyncTask;
-			auto* subTask = &mTask;
-
-			currentTask->mSubTask = static_cast<AsyncTaskBase*>(subTask);
-
-			// Execute inital call to subtask
-			if (subTask->Resume())
+			TaksAwaitableBase(Task<TReturnValue>&& subTask)
+				: mTask(std::move(subTask))
 			{
-				// Subtask done, resume main task
-				currentTask->mSubTask = nullptr;
-				return false;
+
 			}
 
-			// Subtask not done, suspend main task
-			return true;
-		}
-
-		Task<TReturnValue> mTask;
-	};
-
-	template <class TReturnValue, typename TPromise>
-	struct AwaitableAsyncOperation : public AwaitableAsyncOperationBase<TReturnValue, TPromise>
-	{
-		AwaitableAsyncOperation(Task<TReturnValue>&& subTask)
-			: AwaitableAsyncOperationBase<TReturnValue, TPromise>(std::move(subTask))
-		{
-
-		}
-
-		// Initially had a template specialization for this, but if constexpr is cleaner.
-		TReturnValue await_resume()
-		{
-			// This will directly return the return value when resuming from a co_await from an AsyncTask.
-			// Another option would be to return the promise object.
-			if constexpr (std::is_void<TReturnValue>::value)
+			// Support co_await
+			bool await_ready()
 			{
-				return;
+				return mTask.IsFinished();
 			}
-			else
+
+			// true = suspend, false = resume
+			bool await_suspend(std::coroutine_handle<TPromise> currentTaskHandle)
 			{
-				return this->mTask.GetResult();
-			}
-		}
-	};
+				// Set up and execute subtask when calling co_await on a AsyncTask
+				// TODO We should probably use share pointers for safety
+				auto* currentTask = currentTaskHandle.promise().mAsyncTask;
+				auto* subTask = &mTask;
 
-	/// Promise ///
+				currentTask->mSubTask = static_cast<TaskBase*>(subTask);
 
-	template <class TPromise, class TReturn>
-	struct PromiseAsyncOperationBase
-	{
-		// Standard promise config
-		Task<typename TReturn> get_return_object()
-		{
-			return { std::coroutine_handle<TPromise>::from_promise(*static_cast<TPromise*>(this)) };
-		}
-		std::suspend_always initial_suspend() noexcept { return {}; }
-		std::suspend_always final_suspend() noexcept { return {}; }
-		void unhandled_exception() {}
-
-		// TODO should we also support non-movable tasks?
-		// Support co_await of different return types
-		template<class TSubReturnValue>
-		auto await_transform(Task<TSubReturnValue>&& subTask)
-		{
-			return AwaitableAsyncOperation<TSubReturnValue, TPromise>(std::move(subTask));
-		}
-
-		auto await_transform(std::suspend_always suspend)
-		{
-			return suspend;
-		}
-
-		Task<TReturn>* mAsyncTask = nullptr;	// Pointer to the task using this promise.
-	};
-
-	template <class TReturnValue>
-	struct PromiseAsyncOperation : public PromiseAsyncOperationBase<PromiseAsyncOperation<TReturnValue>, TReturnValue>
-	{
-		/*
-		// TODO Support co_yield
-		template<std::convertible_to<ReturnValue> From> // C++20 concept
-		std::suspend_always yield_value(From&& from)
-		{
-			mReturnValue = std::forward<From>(from);
-			mHasResult = true;
-			return {};
-		}
-		*/
-
-		// Support co_return
-		template<std::convertible_to<TReturnValue> TFrom> // C++20 concept
-		void return_value(TFrom&& from)
-		{
-			this->mAsyncTask->mResult = std::forward<TFrom>(from);
-		}
-	};
-
-	// Specialization to allow tasks with no return type
-	template <>
-	struct PromiseAsyncOperation<void> : public PromiseAsyncOperationBase<PromiseAsyncOperation<void>, void>
-	{
-		// Support co_return
-		void return_void() {}
-	};
-
-	/// Task ///
-
-	struct AsyncTaskBase
-	{
-		AsyncTaskBase() = default;
-		AsyncTaskBase& operator= (AsyncTaskBase&& other) noexcept
-		{
-			mHandle = std::move(other.mHandle);
-			mSubTask = std::move(other.mSubTask);
-
-			// We need to invalidate the original handle to ensure that we call the coroutine destructor only once
-			other.mHandle = nullptr;
-			other.mSubTask = nullptr;
-
-			return *this;
-		}
-
-		AsyncTaskBase(std::coroutine_handle<> h)
-			: mHandle(h)
-		{
-
-		}
-
-		AsyncTaskBase(AsyncTaskBase&& task) noexcept
-			: mHandle(std::move(task.mHandle))
-			, mSubTask(std::move(task.mSubTask))
-		{
-			// We need to invalidate the original handle to ensure that we call the coroutine destructor only once
-			task.mHandle = nullptr;
-			task.mSubTask = nullptr;
-		}
-
-		// This should also kill subtasks? (virtual?)
-		virtual ~AsyncTaskBase()
-		{
-			// This can be false when we move a coroutine (i.e. on an awaitable)
-			if (mHandle && mHandle.done())
-			{
-				mHandle.destroy();
-			}
-		}
-
-		bool IsFinished() const
-		{
-			return mHandle.done();
-		}
-
-		// True if task is finished, otherwise false
-		bool Resume()
-		{
-			if (mSubTask)
-			{
-				if (!mSubTask->Resume())
+				// Execute inital call to subtask
+				if (subTask->Resume())
 				{
+					// Subtask done, resume main task
+					currentTask->mSubTask = nullptr;
 					return false;
 				}
-				mSubTask = nullptr;
+
+				// Subtask not done, suspend main task
+				return true;
 			}
 
-			if (mHandle && !mHandle.done())
-			{
-				mHandle.resume();
-				return IsFinished();
-			}
+			Task<TReturnValue> mTask;
+		};
 
-			return true;
-		}
-
-		bool operator()()
+		template <class TReturnValue, typename TPromise>
+		struct TaksAwaitable : public TaksAwaitableBase<TReturnValue, TPromise>
 		{
-			return Resume();
-		}
+			TaksAwaitable(Task<TReturnValue>&& subTask)
+				: TaksAwaitableBase<TReturnValue, TPromise>(std::move(subTask))
+			{
 
-		// "Strong" handle, will destroy couroutine when tasks is destroy. Need to ensure we only have one.
-		std::coroutine_handle<> mHandle;
-		AsyncTaskBase* mSubTask = nullptr;
-	};
+			}
+
+			// Initially had a template specialization for this, but if constexpr is cleaner.
+			TReturnValue await_resume()
+			{
+				// This will directly return the return value when resuming from a co_await from an AsyncTask.
+				// Another option would be to return the promise object.
+				if constexpr (std::is_void<TReturnValue>::value)
+				{
+					return;
+				}
+				else
+				{
+					return this->mTask.GetResult();
+				}
+			}
+		};
+
+		/// Promise ///
+
+		template <class TPromise, class TReturn>
+		struct TaskPromiseBase
+		{
+			// Standard promise config
+			Task<typename TReturn> get_return_object()
+			{
+				return { std::coroutine_handle<TPromise>::from_promise(*static_cast<TPromise*>(this)) };
+			}
+			std::suspend_always initial_suspend() noexcept { return {}; }
+			std::suspend_always final_suspend() noexcept { return {}; }
+			void unhandled_exception() {}
+
+			// TODO should we also support non-movable tasks?
+			// Support co_await of different return types
+			template<class TSubReturnValue>
+			auto await_transform(Task<TSubReturnValue>&& subTask)
+			{
+				return TaksAwaitable<TSubReturnValue, TPromise>(std::move(subTask));
+			}
+
+			auto await_transform(std::suspend_always suspend)
+			{
+				return suspend;
+			}
+
+			Task<TReturn>* mAsyncTask = nullptr;	// Pointer to the task using this promise.
+		};
+
+		template <class TReturnValue>
+		struct TaskPromise : public TaskPromiseBase<TaskPromise<TReturnValue>, TReturnValue>
+		{
+			/*
+			// TODO Support co_yield
+			template<std::convertible_to<ReturnValue> From> // C++20 concept
+			std::suspend_always yield_value(From&& from)
+			{
+				mReturnValue = std::forward<From>(from);
+				mHasResult = true;
+				return {};
+			}
+			*/
+
+			// Support co_return
+			template<std::convertible_to<TReturnValue> TFrom> // C++20 concept
+			void return_value(TFrom&& from)
+			{
+				this->mAsyncTask->mResult = std::forward<TFrom>(from);
+			}
+		};
+
+		// Specialization to allow tasks with no return type
+		template <>
+		struct TaskPromise<void> : public TaskPromiseBase<TaskPromise<void>, void>
+		{
+			// Support co_return
+			void return_void() {}
+		};
+
+		/// Task ///
+
+		struct TaskBase
+		{
+			TaskBase() = default;
+			TaskBase& operator= (TaskBase&& other) noexcept
+			{
+				mHandle = std::move(other.mHandle);
+				mSubTask = std::move(other.mSubTask);
+
+				// We need to invalidate the original handle to ensure that we call the coroutine destructor only once
+				other.mHandle = nullptr;
+				other.mSubTask = nullptr;
+
+				return *this;
+			}
+
+			TaskBase(std::coroutine_handle<> h)
+				: mHandle(h)
+			{
+
+			}
+
+			TaskBase(TaskBase&& task) noexcept
+				: mHandle(std::move(task.mHandle))
+				, mSubTask(std::move(task.mSubTask))
+			{
+				// We need to invalidate the original handle to ensure that we call the coroutine destructor only once
+				task.mHandle = nullptr;
+				task.mSubTask = nullptr;
+			}
+
+			// This should also kill subtasks? (virtual?)
+			virtual ~TaskBase()
+			{
+				// This can be false when we move a coroutine (i.e. on an awaitable)
+				if (mHandle && mHandle.done())
+				{
+					mHandle.destroy();
+				}
+			}
+
+			bool IsFinished() const
+			{
+				return mHandle.done();
+			}
+
+			// True if task is finished, otherwise false
+			bool Resume()
+			{
+				if (mSubTask)
+				{
+					if (!mSubTask->Resume())
+					{
+						return false;
+					}
+					mSubTask = nullptr;
+				}
+
+				if (mHandle && !mHandle.done())
+				{
+					mHandle.resume();
+					return IsFinished();
+				}
+
+				return true;
+			}
+
+			bool operator()()
+			{
+				return Resume();
+			}
+
+			// "Strong" handle, will destroy couroutine when tasks is destroy. Need to ensure we only have one.
+			std::coroutine_handle<> mHandle;
+			TaskBase* mSubTask = nullptr;
+		};
+
+	}
 
 	template <class TReturnValue = void>
-	struct Task : public AsyncTaskBase
+	struct Task : public Private::TaskBase
 	{
-		using promise_type = PromiseAsyncOperation<TReturnValue>;
+		using promise_type = Private::TaskPromise<TReturnValue>;
 		using handle_type = std::coroutine_handle<promise_type>;
 
 		// TODO: This should move the object correctly
 		Task() = default;
 		Task& operator= (Task&& other) noexcept
 		{
-			AsyncTaskBase::operator=(std::move(other));
+			TaskBase::operator=(std::move(other));
 
 			mHandleWithPromise = std::move(other.mHandleWithPromise);
 			mResult = std::move(other.mResult);
@@ -237,14 +242,14 @@ namespace Async
 		};
 
 		Task(handle_type h)
-			: AsyncTaskBase(h)
+			: TaskBase(h)
 		{
 			h.promise().mAsyncTask = this;
 			mHandleWithPromise = h;
 		}
 
 		Task(Task&& other) noexcept
-			: AsyncTaskBase(std::move(other))
+			: TaskBase(std::move(other))
 			, mHandleWithPromise(std::move(other.mHandleWithPromise))
 			, mResult(std::move(other.mResult))
 		{
@@ -271,29 +276,29 @@ namespace Async
 	};
 
 	template <>
-	struct Task<void> : public AsyncTaskBase
+	struct Task<void> : public Private::TaskBase
 	{
-		using promise_type = PromiseAsyncOperation<void>;
+		using promise_type = Private::TaskPromise<void>;
 		using handle_type = std::coroutine_handle<promise_type>;
 
 		Task() = default;
 		Task& operator= (Task&& other) noexcept
 		{
-			AsyncTaskBase::operator=(std::move(other));
+			TaskBase::operator=(std::move(other));
 			mHandleWithPromise = std::move(other.mHandleWithPromise);
 			mHandleWithPromise.promise().mAsyncTask = this;
 			return *this;
 		};
 
 		Task(handle_type h)
-			: AsyncTaskBase(h)
+			: TaskBase(h)
 		{
 			h.promise().mAsyncTask = this;
 			mHandleWithPromise = h;
 		}
 
 		Task(Task&& other) noexcept
-			: AsyncTaskBase(std::move(other))
+			: TaskBase(std::move(other))
 			, mHandleWithPromise(std::move(other.mHandleWithPromise))
 		{
 			// When moving the async task into the awaitable, we need to update the address stored in the promise.
