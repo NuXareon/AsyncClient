@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "Async/AsyncCoroutineOperation.h"
-#include "UI\DisplayBooksByYearUI.h"
+#include "UI/DisplayBooksByYearUI.h"
 
 using namespace std::chrono_literals;
 
@@ -118,7 +118,10 @@ int main()
 {
     while (1)
     {
-        std::cout << "0 - Run Coroutine Test" << std::endl << "1 - Book UI" << std::endl;
+        std::cout 
+            << "1 - Run Coroutine Test" << std::endl 
+            << "2 - Book UI" << std::endl
+            << "0 - Exit" << std::endl;
         std::cout << "Waiting for input: ";
         int inputOption;
         std::cin >> inputOption;
@@ -144,4 +147,3 @@ int main()
 
     return 0;
 }
-

@@ -12,7 +12,7 @@ void DisplayBooksByYearUI::Start()
 	DebugLog("Starting UI\n");
 	mFetchBookOperation = FetchBookData(YEAR_TO_FILTER);
 
-	std::cout << "Diplaying data for available books release on " << YEAR_TO_FILTER << std::endl;
+	std::cout << "Diplaying data for available books released on " << YEAR_TO_FILTER << std::endl;
 }
 
 bool DisplayBooksByYearUI::Tick(long long frameCount)
