@@ -50,7 +50,7 @@ namespace Async
 		using async_return_type = OperationResult<return_type>;
 
 		template <class ... Args>
-		static std::future<async_return_type> ExecuteOperation(Args ... args)
+		static std::future<async_return_type> ExecuteOperation(Args&& ... args)
 		{
 			return std::async(std::launch::async, [=]()
 				{
@@ -89,17 +89,3 @@ namespace Async
 		}
 	};
 }
-
-class TestOperation1 : public Async::Operation<TestOperation1, int>
-{
-public:
-
-	static async_return_type StartOperation();
-};
-
-class TestOperation2 : public Async::Operation<TestOperation2, float>
-{
-public:
-
-	static async_return_type StartOperation(float increment);
-};

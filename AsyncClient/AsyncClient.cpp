@@ -7,6 +7,30 @@
 
 using namespace std::chrono_literals;
 
+class TestOperation1 : public Async::Operation<TestOperation1, int>
+{
+public:
+
+    static async_return_type StartOperation()
+    {
+        std::this_thread::sleep_for(2s);
+    
+        return 1;
+    }
+};
+
+class TestOperation2 : public Async::Operation<TestOperation2, float>
+{
+public:
+
+    static async_return_type StartOperation(float increment)
+    {
+        std::this_thread::sleep_for(2s);
+
+        return 2.f + increment;
+    }
+};
+
 // Coroutine with no return type
 Async::Task<> testCoroutine1()
 {
@@ -136,10 +160,12 @@ int main()
         case 1:
         {
             ExecuteCoroutineTest();
+            break;
         }
         case 2:
         {
             ExecuteBookExample();
+            break;
         }
         }
         std::cout << std::endl;
