@@ -1,0 +1,32 @@
+// protoc --cpp_out=AsyncClient\ --go_out=server\ protobuf\BookLibraryService.proto
+
+syntax = "proto3";
+
+package BookService;
+
+option go_package = "protobuff/bookservice";
+
+service BookLibrary {
+    rpc GetBookStatus(BookId) returns (BookState) {}
+    rpc GetAllBookLocations(BookId) returns (stream Location) {}
+}
+
+message BookId {
+    string id = 1;
+}
+
+enum BookStateEnum {
+    Unavailable = 0;
+    Available = 1;
+    Reserved = 2;
+}
+
+message BookState {
+    BookStateEnum state = 1;
+    repeated string location = 2; // If Available: Where is the book available
+    optional string user = 3; // If Reserved: Who is the last person who reserved the book
+}
+
+message Location {
+    string location = 1;
+}

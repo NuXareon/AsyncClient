@@ -1,0 +1,1 @@
+protoc --cpp_out=AsyncClient\ --go_out=server\ protobuf\BookLibraryService.proto

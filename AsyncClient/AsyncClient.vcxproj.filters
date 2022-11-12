@@ -41,9 +41,6 @@
     <ClCompile Include="AsyncClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Async\AsyncOperation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="UI\DisplayBooksByYearUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

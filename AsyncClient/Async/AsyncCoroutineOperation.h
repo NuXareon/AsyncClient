@@ -17,6 +17,7 @@ namespace Async
             { a.get() } -> std::same_as<ReturnType>;
         };
 
+        // Async::Operation fulfill this requirements
         template<typename T, class ... Args>
         concept OperationType = requires (Args&& ... args)
         {
@@ -25,6 +26,12 @@ namespace Async
             { T::ExecuteOperation(std::forward<Args...>(args)...) } -> FutureType<typename T::async_return_type>;
             // { T::StartOperation(args...) } -> std::same_as<typename T::async_return_type>;
         };
+
+        template <typename T>
+        concept Resumable =
+            requires (T a) { a.Resume; } ||
+            requires (T a) { a.resume; } ||
+            requires (T a) { a(); };    // This technically makes lambdas valid inputs too tho..
     }
 
     template <class AsyncOperation, class ... Args>
@@ -66,7 +73,7 @@ namespace Async
         }
     }
 
-    template <class ... TAsyncTasks>
+    template <Private::Resumable ... TAsyncTasks>
     Task<> RunOperationsParallel(TAsyncTasks& ... asyncTasks)
     {
         while (true)
