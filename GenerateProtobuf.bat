@@ -1,1 +1,2 @@
-protoc --cpp_out=AsyncClient\ --go_out=server\ protobuf\BookLibraryService.proto
+protoc --go_out=server\ --go-grpc_out=server\ protobuf\BookLibraryService.proto
+protoc --cpp_out=AsyncClient\ --grpc_out=AsyncClient\ --plugin=protoc-gen-grpc=C:\Dev\vcpkg\packages\grpc_x64-windows\tools\grpc\grpc_cpp_plugin.exe protobuf\BookLibraryService.proto

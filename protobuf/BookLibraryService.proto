@@ -1,5 +1,3 @@
-// protoc --cpp_out=AsyncClient\ --go_out=server\ protobuf\BookLibraryService.proto
-
 syntax = "proto3";
 
 package BookService;

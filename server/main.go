@@ -5,5 +5,7 @@ import (
 )
 
 func main() {
-	InitializeRestServer();
+	// TODO try to run both with goroutines
+	//InitializeRestServer()
+	InitializeRpcServer()
 }
