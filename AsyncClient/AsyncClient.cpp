@@ -2,7 +2,11 @@
 //
 
 #include <iostream>
+
+#include <grpcpp/create_channel.h>
+
 #include "Async/AsyncCoroutineOperation.h"
+#include "Async/BookStatusService.h"
 #include "UI/DisplayBooksByYearUI.h"
 
 using namespace std::chrono_literals;
@@ -117,7 +121,7 @@ void ExecuteCoroutineTest()
     std::cout << "Parallel task function done\n";
 }
 
-void ExecuteBookExample()
+void ExecuteBookDataExample()
 {
     DisplayBooksByYearUI bookUI;
     long long frameCount = 0;
@@ -136,6 +140,12 @@ void ExecuteBookExample()
     }
 
     bookUI.End();
+}
+
+void ExecuteBookStatusExample()
+{
+    auto bookStatusService = std::make_shared<BookStatusService>(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+    // TODO use this
 }
 
 int main()
@@ -164,8 +174,12 @@ int main()
         }
         case 2:
         {
-            ExecuteBookExample();
+            ExecuteBookDataExample();
             break;
+        }
+        case 3:
+        {
+            ExecuteBookStatusExample();
         }
         }
         std::cout << std::endl;

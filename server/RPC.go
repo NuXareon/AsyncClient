@@ -6,6 +6,7 @@ import (
 	"context"
 	"log"
 	"net"
+	"time"
 
 	pb "example.com/server/protobuff/bookservice"
 	"google.golang.org/grpc/codes"
@@ -20,7 +21,10 @@ type bookLibraryServer struct {
 	bookUsers map[string]string;
 }
 
-func (s *bookLibraryServer) GetBookStatus(ctx context.Context, bookId *pb.BookId) (*pb.BookState, error) {
+func (s *bookLibraryServer) GetBookStatus(ctx context.Context, bookId *pb.BookId) (*pb.BookState, error) {	
+	// Fake network conditions
+	time.Sleep(500 * time.Millisecond)
+
 	if bookStatus, found := s.bookStatus[bookId.Id]; found {
 		if (bookStatus == pb.BookStateEnum_Unavailable) {
 			return &pb.BookState{State: pb.BookStateEnum_Unavailable}, nil
@@ -41,8 +45,15 @@ func (s *bookLibraryServer) GetBookStatus(ctx context.Context, bookId *pb.BookId
 	return &pb.BookState{}, status.Errorf(codes.NotFound, "Book Id not found.")
 }
 
+func (s *bookLibraryServer) initBookStatus(data map[string]bookData) {
+	for id := range data {
+		s.bookStatus[id] = pb.BookStateEnum_Available;
+	}
+}
+
 func initBookLabraryService() *bookLibraryServer {
-	s := &bookLibraryServer{} // TODO init with data
+	s := &bookLibraryServer{bookStatus: make(map[string]pb.BookStateEnum), bookLocation: make(map[string]string), bookUsers: make(map[string]string)}
+	s.initBookStatus(availableBooks)
 	return s
 }
 

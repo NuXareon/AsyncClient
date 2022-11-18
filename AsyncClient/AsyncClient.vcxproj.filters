@@ -36,6 +36,18 @@
     <ClInclude Include="Async\BookOperations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="protobuf\BookLibraryService.grpc.pb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="protobuf\BookLibraryService.pb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Async\RpcService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Async\BookStatusService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsyncClient.cpp">
@@ -45,6 +57,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Async\BookOperations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="protobuf\BookLibraryService.grpc.pb.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="protobuf\BookLibraryService.pb.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
