@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"time"
+	"math/rand"
 
 	pb "example.com/server/protobuff/bookservice"
 	"google.golang.org/grpc/codes"
@@ -48,6 +49,7 @@ func (s *bookLibraryServer) GetBookStatus(ctx context.Context, bookId *pb.BookId
 func (s *bookLibraryServer) initBookStatus(data map[string]bookData) {
 	for id := range data {
 		s.bookStatus[id] = pb.BookStateEnum_Available;
+		s.bookLocation[id] = locations[rand.Intn(len(locations))]
 	}
 }
 

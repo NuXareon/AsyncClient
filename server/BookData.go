@@ -26,3 +26,11 @@ var publishers = map[string][]string {
 	"Gold Medal Books" : {"I Am Legend"},
 	"Orbit" : {"Kings of the Wyld"},
 }
+
+var locations = []string {
+	"Barcelona",
+	"Berlin",
+	"Paris",
+	"Tokio",
+	"London",
+}

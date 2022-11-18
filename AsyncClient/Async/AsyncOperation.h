@@ -12,12 +12,12 @@ namespace Async
 	{
 		OperationResult() = default;
 		OperationResult(TReturn&& returnValue)
-			: mReturnValue(returnValue)
+			: mReturnValue(std::forward<TReturn&&>(returnValue))
 		{
 		}
 		OperationResult(int responseCode, TReturn&& returnValue)
 			: mResponseCode(responseCode)
-			, mReturnValue(returnValue)
+			, mReturnValue(std::forward<TReturn&&>(returnValue))
 		{
 		}
 

@@ -145,7 +145,38 @@ void ExecuteBookDataExample()
 void ExecuteBookStatusExample()
 {
     auto bookStatusService = std::make_shared<BookStatusService>(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
-    // TODO use this
+    
+    // TODO make ui class
+    long long frameCount = 0;
+    bool runSimulation = true;
+
+    while (runSimulation)
+    {
+        //grpc_return_type<getbookstatus_return> GetBookStatus(const std::vector<std::string>&ids)
+
+        // todo move to ui class
+        DebugLog("Ticking Main (%lld)\n", frameCount);
+
+        std::vector<std::string> ids;
+        ids.push_back("2");
+        ids.push_back("4");
+        auto result = bookStatusService->GetBookStatus(ids);
+        if (result.HasSuccess())
+        {
+            for (auto& entry : result.mReturnValue)
+            {
+                std::cout << entry.first << " : " << BookService::BookStateEnum_Name(entry.second.state()) << std::endl;
+            }
+
+            return;
+        }
+        //runSimulation &= bookUI.Tick(frameCount);
+
+        // ~60fps (minus UI tick)
+        constexpr auto sleepTime = std::chrono::milliseconds(static_cast<int>(1000.0f / 60.0f));
+        std::this_thread::sleep_for(sleepTime);
+        ++frameCount;
+    }
 }
 
 int main()
@@ -154,7 +185,8 @@ int main()
     {
         std::cout 
             << "1 - Run Coroutine Test" << std::endl 
-            << "2 - Book UI" << std::endl
+            << "2 - Book Info UI" << std::endl
+            << "3 - Book Status UI" << std::endl
             << "0 - Exit" << std::endl;
         std::cout << "Waiting for input: ";
         int inputOption;
