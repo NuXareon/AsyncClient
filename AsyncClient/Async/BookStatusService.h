@@ -2,6 +2,10 @@
 
 #include "RpcService.h"
 #include "protobuf/BookLibraryService.grpc.pb.h"
+#include "Async/Coroutine.h"
+
+#include "Utils.h"
+#include <future>
 
 class BookStatusService : public Async::RpcService<BookService::BookLibrary>
 {
@@ -12,8 +16,32 @@ public:
 
 	}
 
-	//::grpc::Status GetBookStatus(::grpc::ClientContext* context, const ::BookService::BookId& request, ::BookService::BookState* response) override;
+	// This could actually be codegen... plz give us reflection
 	using getbookstatus_return = std::map<std::string, BookService::BookState>;
+	using getbookstatus_task = Async::Task<grpc_return_type<getbookstatus_return>>;
+	getbookstatus_task GetBookStatusTask(const std::vector<std::string>& ids)
+	{
+		using namespace std::chrono_literals;
+
+		DebugLog("RPC Start\n");
+
+		auto asyncResult = std::async(std::launch::async, [=]()
+			{
+				// Unique part is this
+				return this->GetBookStatus(ids);
+			});
+
+		while (asyncResult.wait_for(0s) != std::future_status::ready)
+		{
+			co_await std::suspend_always{};
+		}
+
+		DebugLog("Operation Finished\n");
+
+		co_return asyncResult.get();
+	}
+
+	//::grpc::Status GetBookStatus(::grpc::ClientContext* context, const ::BookService::BookId& request, ::BookService::BookState* response) override;
 	grpc_return_type<getbookstatus_return> GetBookStatus(const std::vector<std::string>& ids)
 	{
 		// TODO: fire this ops in parallel

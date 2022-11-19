@@ -1,7 +1,7 @@
 #pragma once
 
 // TODO should clean up includes project wide
-#include "../Async/Coroutine.h"
+#include "Async/Coroutine.h"
 #include <map>
 #include <string>
 
@@ -23,5 +23,5 @@ private:
 	void DisplayBookData(const std::map<std::string, BookInfo>& bookData, const std::map<std::string, std::string>& bookCollection, const std::map<std::string, std::string>& bookPublisher) const;
 
 private:
-	Async::Task<bool> mFetchBookOperation;
+	Async::Task<bool> mFetchBookTask;
 };

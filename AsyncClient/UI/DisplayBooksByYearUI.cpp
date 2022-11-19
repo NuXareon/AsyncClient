@@ -10,7 +10,7 @@
 void DisplayBooksByYearUI::Start()
 {
 	DebugLog("Starting UI\n");
-	mFetchBookOperation = FetchBookData(YEAR_TO_FILTER);
+	mFetchBookTask = FetchBookData(YEAR_TO_FILTER);
 
 	std::cout << "Diplaying data for available books released on " << YEAR_TO_FILTER << std::endl;
 }
@@ -18,13 +18,13 @@ void DisplayBooksByYearUI::Start()
 bool DisplayBooksByYearUI::Tick(long long frameCount)
 {
 	DebugLog("Ticking UI (%lld)\n", frameCount);
-	mFetchBookOperation.Resume();
-	if (mFetchBookOperation.HasResult() && mFetchBookOperation.GetResult() == false)
+	mFetchBookTask.Resume();
+	if (mFetchBookTask.HasResult() && mFetchBookTask.GetResult() == false)
 	{
 		std::cout << "Failed to display book data" << std::endl;
 		return false;	// Close the UI
 	}
-	return !mFetchBookOperation.IsFinished();
+	return !mFetchBookTask.IsFinished();
 }
 
 void DisplayBooksByYearUI::End()

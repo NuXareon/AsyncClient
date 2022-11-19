@@ -167,6 +167,7 @@
     <ClInclude Include="protobuf\BookLibraryService.grpc.pb.h" />
     <ClInclude Include="protobuf\BookLibraryService.pb.h" />
     <ClInclude Include="UI\DisplayBooksByYearUI.h" />
+    <ClInclude Include="UI\ManageBookReservationsUI.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +176,7 @@
     <ClCompile Include="protobuf\BookLibraryService.grpc.pb.cc" />
     <ClCompile Include="protobuf\BookLibraryService.pb.cc" />
     <ClCompile Include="UI\DisplayBooksByYearUI.cpp" />
+    <ClCompile Include="UI\ManageBookReservationsUI.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
