@@ -13,7 +13,7 @@ void ManageBookReservationsUI::Start()
     DebugLog("Starting UI\n");
     mProcessBookReservationsTask = ProcessBookReservations();
 
-    std::cout << "Processing book reservations...";
+    std::cout << "Processing book reservations..." << std::endl;
 }
 
 bool ManageBookReservationsUI::Tick(long long frameCount)

@@ -16,32 +16,20 @@ public:
 
 	}
 
-	// This could actually be codegen... plz give us reflection
 	using getbookstatus_return = std::map<std::string, BookService::BookState>;
-	using getbookstatus_task = Async::Task<grpc_return_type<getbookstatus_return>>;
-	getbookstatus_task GetBookStatusTask(const std::vector<std::string>& ids)
+	rpc_task<getbookstatus_return> GetBookStatusTask(const std::vector<std::string>& ids)
 	{
-		using namespace std::chrono_literals;
-
-		DebugLog("RPC Start\n");
-
-		auto asyncResult = std::async(std::launch::async, [=]()
+		// TODO move stuff to cpp
+		auto result = co_await GenerateTaskForCall<rpc_task<getbookstatus_return>>([=]()
 			{
-				// Unique part is this
 				return this->GetBookStatus(ids);
 			});
 
-		while (asyncResult.wait_for(0s) != std::future_status::ready)
-		{
-			co_await std::suspend_always{};
-		}
-
-		DebugLog("Operation Finished\n");
-
-		co_return asyncResult.get();
+		co_return result;
 	}
 
-	//::grpc::Status GetBookStatus(::grpc::ClientContext* context, const ::BookService::BookId& request, ::BookService::BookState* response) override;
+private:
+
 	grpc_return_type<getbookstatus_return> GetBookStatus(const std::vector<std::string>& ids)
 	{
 		// TODO: fire this ops in parallel
@@ -67,12 +55,10 @@ public:
 			{
 				return ReturnErrorCode<getbookstatus_return>(status);
 			}
-			
+
 			result.emplace(id, responseState);
 		}
 
 		return { grpc::Status::OK, std::move(result) };
 	}
-
-private:
 };
