@@ -4,9 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
+	"log"
 )
 
 func InitializeRestServer() {
+	log.Printf("Initializing REST Server");
 	router := gin.Default()
 	router.GET("/books/available", getAvailableBooks)
 	router.GET("/books", getBookData)

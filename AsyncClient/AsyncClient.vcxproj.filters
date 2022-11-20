@@ -71,5 +71,8 @@
     <ClCompile Include="UI\ManageBookReservationsUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Async\BookStatusService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

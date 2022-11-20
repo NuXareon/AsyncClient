@@ -24,7 +24,7 @@ type bookLibraryServer struct {
 
 func (s *bookLibraryServer) GetBookStatus(ctx context.Context, bookId *pb.BookId) (*pb.BookState, error) {	
 	// Fake network conditions
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(300 * time.Millisecond)
 
 	if bookStatus, found := s.bookStatus[bookId.Id]; found {
 		if (bookStatus == pb.BookStateEnum_Unavailable) {
@@ -60,6 +60,7 @@ func initBookLabraryService() *bookLibraryServer {
 }
 
 func InitializeRpcServer() {
+	log.Printf("Initializing RPC Server");
 	lis, err := net.Listen("tcp", "localhost:50051")
 	if err != nil {
 		log.Fatalf("RPC server failed to listen: %v", err)

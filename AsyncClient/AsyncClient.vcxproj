@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="AsyncClient.cpp" />
     <ClCompile Include="Async\BookOperations.cpp" />
+    <ClCompile Include="Async\BookStatusService.cpp" />
     <ClCompile Include="protobuf\BookLibraryService.grpc.pb.cc" />
     <ClCompile Include="protobuf\BookLibraryService.pb.cc" />
     <ClCompile Include="UI\DisplayBooksByYearUI.cpp" />

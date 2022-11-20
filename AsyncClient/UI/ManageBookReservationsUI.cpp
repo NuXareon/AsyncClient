@@ -1,6 +1,13 @@
 #include "ManageBookReservationsUI.h"
 
+// REST
+#include "Async/AsyncCoroutineOperation.h"
+#include "Async/BookOperations.h"
+
+// RPC
 #include "Async/BookStatusService.h"
+
+// Etc...
 #include "Utils.h"
 
 ManageBookReservationsUI::ManageBookReservationsUI(const std::shared_ptr<BookStatusService>& bookStatusService)
@@ -36,11 +43,16 @@ void ManageBookReservationsUI::End()
 
 Async::Task<bool> ManageBookReservationsUI::ProcessBookReservations()
 {
-    std::vector<std::string> ids;
-    ids.push_back("2");
-    ids.push_back("4");
-    auto bookStatusResult = co_await mBookStatusService->GetBookStatusTask(ids);
+    // REST call
+    auto availableBookIds = co_await Async::RunOperation<GetAvailableBooksOperation>();
+    if (!availableBookIds.HasSuccess())
+    {
+        std::cout << "Failed to retrieve available books: " << availableBookIds.mResponseCode << std::endl;
+        co_return false;
+    }
 
+    // Multiple RPC calls in parallel
+    auto bookStatusResult = co_await mBookStatusService->GetBookStatusTask(availableBookIds.mReturnValue);
     if (!bookStatusResult.HasSuccess())
     {
         std::cout << "Failed to retrieve book status: " << bookStatusResult.mResponseCode.error_code() << " - " << bookStatusResult.mResponseCode.error_message() << std::endl;

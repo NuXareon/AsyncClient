@@ -1,10 +1,11 @@
 #pragma once
 
 #include <memory>
+#include <future>
 
 #include <grpcpp/channel.h>
 
-#include <future>
+#include "Coroutine.h"
 
 namespace Async
 {
@@ -70,7 +71,7 @@ namespace Async
 
 		// TODO concept to ensure executable and TCallback::Return type == TTask
 		template <class TTask, class TCallback>
-		TTask GenerateTaskForCall(TCallback callback)
+		TTask ExecuteAsTask(TCallback callback)
 		{
 			using namespace std::chrono_literals;
 
@@ -83,7 +84,7 @@ namespace Async
 				co_await std::suspend_always{};
 			}
 
-			DebugLog("Operation Finished\n");
+			DebugLog("RPC Finished\n");
 
 			co_return asyncResult.get();
 		}
