@@ -8,45 +8,34 @@ BookStatusService::BookStatusService(std::shared_ptr<grpc::Channel> channel)
 
 BookStatusService::rpc_task<BookStatusService::getbookstatus_return> BookStatusService::GetBookStatusTask(std::vector<std::string> ids)
 {
-	// TODO: make this generic
-	std::vector<rpc_task<std::pair<std::string, BookService::BookState>>> tasks;
-	for (std::string id : ids)
-	{
-		auto operation = ExecuteAsTask<rpc_task<std::pair<std::string, BookService::BookState>>>([=]()
-			{
-				return this->GetBookStatus(id);
-			});
-		tasks.push_back(std::move(operation));
-	}
-
-	while (true)
-	{
-		bool allFinished = true;
-		for (auto& task : tasks)
+	using getbookstatus_task_type = rpc_task<std::pair<std::string, BookService::BookState>>;
+	auto tasks = co_await ExecuteTasksParallel<getbookstatus_task_type, std::string>(ids, [this](const std::string& id)
 		{
-			allFinished &= task.Resume();
-		}
-
-		if (allFinished)
-		{
-			break;
-		}
-
-		co_await std::suspend_always{};
-	}
+			return ExecuteAsTask<getbookstatus_task_type>([=]()
+				{
+					return this->GetBookStatus(id);
+				});
+		});
 
 	std::map<std::string, BookService::BookState> returnVal;
-	for (const auto& task : tasks)
+	for (auto& task : tasks)
 	{
+		AssertLog(task.HasResult(), "Error: Task has no result. This should not happen.");
+
 		if (task.HasResult())
 		{
-			const auto& result = task.GetResult();
+			auto result = task.ConsumeResult();
 			if (!result.HasSuccess())
 			{
 				co_return ReturnErrorCode<getbookstatus_return>(result.mResponseCode);
 			}
 
-			returnVal.emplace(result.mReturnValue);
+			returnVal.emplace(std::move(result.mReturnValue));
+		}
+		else
+		{
+			DebugLog("Task has no result");
+			co_return ReturnErrorCode<getbookstatus_return>();
 		}
 	}
 

@@ -77,7 +77,8 @@ namespace Async
 				}
 				else
 				{
-					return this->mTask.GetResult();
+					// We can move the result out of the subtask into the parent
+					return this->mTask.ConsumeResult();
 				}
 			}
 		};
@@ -173,8 +174,8 @@ namespace Async
 				task.mHandle = nullptr;
 				task.mSubTask = nullptr;
 			}
-
-			// This should also kill subtasks? (virtual?)
+			
+			// This should also kill subtasks?
 			virtual ~TaskBase()
 			{
 				// This can be false when we move a coroutine (i.e. on an awaitable)
@@ -225,6 +226,9 @@ namespace Async
 	template <class TReturnValue = void>
 	struct Task : public Private::TaskBase
 	{
+		// Could this be a concept? Not sure if that works with the explicit specialization for void
+		static_assert(std::is_move_constructible_v<TReturnValue>);
+
 		using promise_type = Private::TaskPromise<TReturnValue>;
 		using handle_type = std::coroutine_handle<promise_type>;
 
@@ -257,17 +261,38 @@ namespace Async
 			// TODO This is kinda ugly since we keep two handles though, there must be a better way.
 			mHandleWithPromise.promise().mAsyncTask = this;
 		}
-
+		
 		bool HasResult() const
 		{
 			return mResult.has_value();
 		}
 
-		TReturnValue GetResult() const
+		std::enable_if_t<std::is_copy_constructible_v<TReturnValue>, TReturnValue>
+		GetResult() const &
 		{
 			ValidateLog(HasResult(), "No result available from coroutine.");
-			//return *mResult; // Faster, but could crash. Ideally we want to report if the value is not ready somehow.
 			return mResult.value_or(TReturnValue{});
+		}
+
+		std::enable_if_t<std::is_move_constructible_v<TReturnValue>, TReturnValue>
+		GetResult() &&
+		{
+			ValidateLog(HasResult(), "No result available from coroutine.");
+			return std::move(mResult).value_or(TReturnValue{});
+		}
+
+		// Warning, this will modify the result
+		std::enable_if_t<std::is_move_constructible_v<TReturnValue>, TReturnValue>
+		ConsumeResult()
+		{
+			return std::move(*this).GetResult();
+		}
+
+		// Warning, if there isn't a valid result this function will cause a crash. Always check HasResult() beforehand.
+		const TReturnValue& GetResultUnsafe() const
+		{
+			AssertLog(HasResult(), "Invalid access to coroutine result. Make sure to check if a coroutine has a valid result before using this function.");
+			return *mResult;
 		}
 
 		// "Weak" handle, i.e. doesn't destroy couroutine when out of scope

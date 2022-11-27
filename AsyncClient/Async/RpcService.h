@@ -69,7 +69,7 @@ namespace Async
 			return returnVal;
 		}
 
-		// TODO concept to ensure executable and TCallback::Return type == TTask
+		// TODO concept to ensure executable and TCallback::Return type == TTask (also deduce type from return?)
 		template <class TTask, class TCallback>
 		TTask ExecuteAsTask(TCallback callback)
 		{
@@ -87,6 +87,35 @@ namespace Async
 			DebugLog("RPC Finished\n");
 
 			co_return asyncResult.get();
+		}
+
+		template <class TTask, class TInput>
+		Async::Task<std::vector<TTask>> ExecuteTasksParallel(const std::vector<TInput>& inputs, std::function<TTask(TInput)> callback)
+		{
+			std::vector<TTask> tasks;
+			for (const auto& input : inputs)
+			{
+				TTask task = callback(input);
+				tasks.push_back(std::move(task));
+			}
+
+			while (true)
+			{
+				bool allFinished = true;
+				for (auto& task : tasks)
+				{
+					allFinished &= task.Resume();
+				}
+
+				if (allFinished)
+				{
+					break;
+				}
+
+				co_await std::suspend_always{};
+			}
+
+			co_return tasks;
 		}
 
 	protected:
