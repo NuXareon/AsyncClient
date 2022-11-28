@@ -61,8 +61,35 @@ Async::Task<bool> ManageBookReservationsUI::ProcessBookReservations()
 
     for (auto& entry : bookStatusResult.mReturnValue)
     {
-        std::cout << entry.first << " : " << BookService::BookStateEnum_Name(entry.second.state()) << std::endl;
+        PrintBookState(entry.first, entry.second);
     }
 
     co_return true;
+}
+
+void ManageBookReservationsUI::PrintBookState(std::string_view bookId, const BookService::BookState& book) const
+{
+    std::cout << bookId << " : " << BookService::BookStateEnum_Name(book.state());
+
+    if (book.state() == BookService::BookStateEnum::Available)
+    {
+        std::cout << "[";
+        const auto locationCount = book.location_size();
+        for (std::remove_const_t<decltype(locationCount)> locationIdx = 0; locationIdx < locationCount; ++locationIdx)
+        {
+            std::cout << " " << book.location(locationIdx);
+        }
+        std::cout << " ]" << std::endl;
+    }
+    else if (book.state() == BookService::BookStateEnum::Reserved)
+    {
+        if (book.has_user())
+        {
+            std::cout << "[ " << book.user() << " ]" << std::endl;
+        }
+        else
+        {
+            std::cout << "* No User *" << std::endl;
+        }
+    }
 }

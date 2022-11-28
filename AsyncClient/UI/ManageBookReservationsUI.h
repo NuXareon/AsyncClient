@@ -1,10 +1,16 @@
 #pragma once
 
 #include <memory>
+#include <string_view>
 
 #include "Async/Coroutine.h"
 
 class BookStatusService;
+
+namespace BookService
+{
+	class BookState;
+}
 
 class ManageBookReservationsUI
 {
@@ -20,6 +26,8 @@ public:
 
 private:
 	Async::Task<bool> ProcessBookReservations();
+
+	void PrintBookState(std::string_view bookId, const BookService::BookState& book) const;
 	//std::size_t FilterBookInfoByYear(std::map<std::string, BookInfo>& bookData, int year) const;
 	//void DisplayBookData(const std::map<std::string, BookInfo>& bookData, const std::map<std::string, std::string>& bookCollection, const std::map<std::string, std::string>& bookPublisher) const;
 
