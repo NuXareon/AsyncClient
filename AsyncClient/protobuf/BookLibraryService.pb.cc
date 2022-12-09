@@ -50,21 +50,36 @@ struct BookStateDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BookStateDefaultTypeInternal _BookState_default_instance_;
-PROTOBUF_CONSTEXPR Location::Location(
+PROTOBUF_CONSTEXPR BookReservation::BookReservation(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.location_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+    /*decltype(_impl_.user_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.bookid_)*/nullptr
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct LocationDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR LocationDefaultTypeInternal()
+struct BookReservationDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR BookReservationDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~LocationDefaultTypeInternal() {}
+  ~BookReservationDefaultTypeInternal() {}
   union {
-    Location _instance;
+    BookReservation _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LocationDefaultTypeInternal _Location_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BookReservationDefaultTypeInternal _BookReservation_default_instance_;
+PROTOBUF_CONSTEXPR ReturnBook::ReturnBook(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.location_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.bookid_)*/nullptr
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct ReturnBookDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ReturnBookDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ReturnBookDefaultTypeInternal() {}
+  union {
+    ReturnBook _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ReturnBookDefaultTypeInternal _ReturnBook_default_instance_;
 }  // namespace BookService
-static ::_pb::Metadata file_level_metadata_protobuf_2fBookLibraryService_2eproto[3];
+static ::_pb::Metadata file_level_metadata_protobuf_2fBookLibraryService_2eproto[4];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_protobuf_2fBookLibraryService_2eproto[1];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_protobuf_2fBookLibraryService_2eproto = nullptr;
 
@@ -89,23 +104,34 @@ const uint32_t TableStruct_protobuf_2fBookLibraryService_2eproto::offsets[] PROT
   ~0u,
   0,
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::BookService::Location, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::BookService::BookReservation, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::BookService::Location, _impl_.location_),
+  PROTOBUF_FIELD_OFFSET(::BookService::BookReservation, _impl_.bookid_),
+  PROTOBUF_FIELD_OFFSET(::BookService::BookReservation, _impl_.user_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::BookService::ReturnBook, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::BookService::ReturnBook, _impl_.bookid_),
+  PROTOBUF_FIELD_OFFSET(::BookService::ReturnBook, _impl_.location_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::BookService::BookId)},
   { 7, 16, -1, sizeof(::BookService::BookState)},
-  { 19, -1, -1, sizeof(::BookService::Location)},
+  { 19, -1, -1, sizeof(::BookService::BookReservation)},
+  { 27, -1, -1, sizeof(::BookService::ReturnBook)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
   &::BookService::_BookId_default_instance_._instance,
   &::BookService::_BookState_default_instance_._instance,
-  &::BookService::_Location_default_instance_._instance,
+  &::BookService::_BookReservation_default_instance_._instance,
+  &::BookService::_ReturnBook_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_protobuf_2fBookLibraryService_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -113,20 +139,25 @@ const char descriptor_table_protodef_protobuf_2fBookLibraryService_2eproto[] PRO
   "kService\"\024\n\006BookId\022\n\n\002id\030\001 \001(\t\"d\n\tBookSt"
   "ate\022)\n\005state\030\001 \001(\0162\032.BookService.BookSta"
   "teEnum\022\020\n\010location\030\002 \003(\t\022\021\n\004user\030\003 \001(\tH\000"
-  "\210\001\001B\007\n\005_user\"\034\n\010Location\022\020\n\010location\030\001 \001"
-  "(\t*=\n\rBookStateEnum\022\017\n\013Unavailable\020\000\022\r\n\t"
-  "Available\020\001\022\014\n\010Reserved\020\0022\224\001\n\013BookLibrar"
-  "y\022>\n\rGetBookStatus\022\023.BookService.BookId\032"
-  "\026.BookService.BookState\"\000\022E\n\023GetAllBookL"
-  "ocations\022\023.BookService.BookId\032\025.BookServ"
-  "ice.Location\"\0000\001B\027Z\025protobuff/bookservic"
-  "eb\006proto3"
+  "\210\001\001B\007\n\005_user\"D\n\017BookReservation\022#\n\006bookI"
+  "d\030\001 \001(\0132\023.BookService.BookId\022\014\n\004user\030\002 \001"
+  "(\t\"C\n\nReturnBook\022#\n\006bookId\030\001 \001(\0132\023.BookS"
+  "ervice.BookId\022\020\n\010location\030\002 \001(\t*=\n\rBookS"
+  "tateEnum\022\017\n\013Unavailable\020\000\022\r\n\tAvailable\020\001"
+  "\022\014\n\010Reserved\020\0022\350\001\n\013BookLibrary\022>\n\rGetBoo"
+  "kStatus\022\023.BookService.BookId\032\026.BookServi"
+  "ce.BookState\"\000\022M\n\023MakeBookReservation\022\034."
+  "BookService.BookReservation\032\026.BookServic"
+  "e.BookState\"\000\022J\n\025ReturnBookReservation\022\027"
+  ".BookService.ReturnBook\032\026.BookService.Bo"
+  "okState\"\000B\027Z\025protobuff/bookserviceb\006prot"
+  "o3"
   ;
 static ::_pbi::once_flag descriptor_table_protobuf_2fBookLibraryService_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_protobuf_2fBookLibraryService_2eproto = {
-    false, false, 449, descriptor_table_protodef_protobuf_2fBookLibraryService_2eproto,
+    false, false, 642, descriptor_table_protodef_protobuf_2fBookLibraryService_2eproto,
     "protobuf/BookLibraryService.proto",
-    &descriptor_table_protobuf_2fBookLibraryService_2eproto_once, nullptr, 0, 3,
+    &descriptor_table_protobuf_2fBookLibraryService_2eproto_once, nullptr, 0, 4,
     schemas, file_default_instances, TableStruct_protobuf_2fBookLibraryService_2eproto::offsets,
     file_level_metadata_protobuf_2fBookLibraryService_2eproto, file_level_enum_descriptors_protobuf_2fBookLibraryService_2eproto,
     file_level_service_descriptors_protobuf_2fBookLibraryService_2eproto,
@@ -645,51 +676,61 @@ void BookState::InternalSwap(BookState* other) {
 
 // ===================================================================
 
-class Location::_Internal {
+class BookReservation::_Internal {
  public:
+  static const ::BookService::BookId& bookid(const BookReservation* msg);
 };
 
-Location::Location(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+const ::BookService::BookId&
+BookReservation::_Internal::bookid(const BookReservation* msg) {
+  return *msg->_impl_.bookid_;
+}
+BookReservation::BookReservation(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:BookService.Location)
+  // @@protoc_insertion_point(arena_constructor:BookService.BookReservation)
 }
-Location::Location(const Location& from)
+BookReservation::BookReservation(const BookReservation& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  Location* const _this = this; (void)_this;
+  BookReservation* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.location_){}
+      decltype(_impl_.user_){}
+    , decltype(_impl_.bookid_){nullptr}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.location_.InitDefault();
+  _impl_.user_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.location_.Set("", GetArenaForAllocation());
+    _impl_.user_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_location().empty()) {
-    _this->_impl_.location_.Set(from._internal_location(), 
+  if (!from._internal_user().empty()) {
+    _this->_impl_.user_.Set(from._internal_user(), 
       _this->GetArenaForAllocation());
   }
-  // @@protoc_insertion_point(copy_constructor:BookService.Location)
+  if (from._internal_has_bookid()) {
+    _this->_impl_.bookid_ = new ::BookService::BookId(*from._impl_.bookid_);
+  }
+  // @@protoc_insertion_point(copy_constructor:BookService.BookReservation)
 }
 
-inline void Location::SharedCtor(
+inline void BookReservation::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.location_){}
+      decltype(_impl_.user_){}
+    , decltype(_impl_.bookid_){nullptr}
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.location_.InitDefault();
+  _impl_.user_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.location_.Set("", GetArenaForAllocation());
+    _impl_.user_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-Location::~Location() {
-  // @@protoc_insertion_point(destructor:BookService.Location)
+BookReservation::~BookReservation() {
+  // @@protoc_insertion_point(destructor:BookService.BookReservation)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -697,38 +738,51 @@ Location::~Location() {
   SharedDtor();
 }
 
-inline void Location::SharedDtor() {
+inline void BookReservation::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.location_.Destroy();
+  _impl_.user_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.bookid_;
 }
 
-void Location::SetCachedSize(int size) const {
+void BookReservation::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void Location::Clear() {
-// @@protoc_insertion_point(message_clear_start:BookService.Location)
+void BookReservation::Clear() {
+// @@protoc_insertion_point(message_clear_start:BookService.BookReservation)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.location_.ClearToEmpty();
+  _impl_.user_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && _impl_.bookid_ != nullptr) {
+    delete _impl_.bookid_;
+  }
+  _impl_.bookid_ = nullptr;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* Location::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* BookReservation::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string location = 1;
+      // .BookService.BookId bookId = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_location();
+          ptr = ctx->ParseMessage(_internal_mutable_bookid(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string user = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_user();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "BookService.Location.location"));
+          CHK_(::_pbi::VerifyUTF8(str, "BookService.BookReservation.user"));
         } else
           goto handle_unusual;
         continue;
@@ -755,59 +809,318 @@ failure:
 #undef CHK_
 }
 
-uint8_t* Location::_InternalSerialize(
+uint8_t* BookReservation::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:BookService.Location)
+  // @@protoc_insertion_point(serialize_to_array_start:BookService.BookReservation)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string location = 1;
-  if (!this->_internal_location().empty()) {
+  // .BookService.BookId bookId = 1;
+  if (this->_internal_has_bookid()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, _Internal::bookid(this),
+        _Internal::bookid(this).GetCachedSize(), target, stream);
+  }
+
+  // string user = 2;
+  if (!this->_internal_user().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_location().data(), static_cast<int>(this->_internal_location().length()),
+      this->_internal_user().data(), static_cast<int>(this->_internal_user().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "BookService.Location.location");
+      "BookService.BookReservation.user");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_location(), target);
+        2, this->_internal_user(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:BookService.Location)
+  // @@protoc_insertion_point(serialize_to_array_end:BookService.BookReservation)
   return target;
 }
 
-size_t Location::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:BookService.Location)
+size_t BookReservation::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:BookService.BookReservation)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string location = 1;
+  // string user = 2;
+  if (!this->_internal_user().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_user());
+  }
+
+  // .BookService.BookId bookId = 1;
+  if (this->_internal_has_bookid()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.bookid_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData BookReservation::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    BookReservation::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*BookReservation::GetClassData() const { return &_class_data_; }
+
+
+void BookReservation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<BookReservation*>(&to_msg);
+  auto& from = static_cast<const BookReservation&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:BookService.BookReservation)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_user().empty()) {
+    _this->_internal_set_user(from._internal_user());
+  }
+  if (from._internal_has_bookid()) {
+    _this->_internal_mutable_bookid()->::BookService::BookId::MergeFrom(
+        from._internal_bookid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void BookReservation::CopyFrom(const BookReservation& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:BookService.BookReservation)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BookReservation::IsInitialized() const {
+  return true;
+}
+
+void BookReservation::InternalSwap(BookReservation* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.user_, lhs_arena,
+      &other->_impl_.user_, rhs_arena
+  );
+  swap(_impl_.bookid_, other->_impl_.bookid_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BookReservation::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_protobuf_2fBookLibraryService_2eproto_getter, &descriptor_table_protobuf_2fBookLibraryService_2eproto_once,
+      file_level_metadata_protobuf_2fBookLibraryService_2eproto[2]);
+}
+
+// ===================================================================
+
+class ReturnBook::_Internal {
+ public:
+  static const ::BookService::BookId& bookid(const ReturnBook* msg);
+};
+
+const ::BookService::BookId&
+ReturnBook::_Internal::bookid(const ReturnBook* msg) {
+  return *msg->_impl_.bookid_;
+}
+ReturnBook::ReturnBook(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:BookService.ReturnBook)
+}
+ReturnBook::ReturnBook(const ReturnBook& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ReturnBook* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.location_){}
+    , decltype(_impl_.bookid_){nullptr}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.location_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.location_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_location().empty()) {
+    _this->_impl_.location_.Set(from._internal_location(), 
+      _this->GetArenaForAllocation());
+  }
+  if (from._internal_has_bookid()) {
+    _this->_impl_.bookid_ = new ::BookService::BookId(*from._impl_.bookid_);
+  }
+  // @@protoc_insertion_point(copy_constructor:BookService.ReturnBook)
+}
+
+inline void ReturnBook::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.location_){}
+    , decltype(_impl_.bookid_){nullptr}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.location_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.location_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+ReturnBook::~ReturnBook() {
+  // @@protoc_insertion_point(destructor:BookService.ReturnBook)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void ReturnBook::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.location_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.bookid_;
+}
+
+void ReturnBook::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void ReturnBook::Clear() {
+// @@protoc_insertion_point(message_clear_start:BookService.ReturnBook)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.location_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && _impl_.bookid_ != nullptr) {
+    delete _impl_.bookid_;
+  }
+  _impl_.bookid_ = nullptr;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ReturnBook::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .BookService.BookId bookId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_bookid(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string location = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_location();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "BookService.ReturnBook.location"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* ReturnBook::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:BookService.ReturnBook)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .BookService.BookId bookId = 1;
+  if (this->_internal_has_bookid()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, _Internal::bookid(this),
+        _Internal::bookid(this).GetCachedSize(), target, stream);
+  }
+
+  // string location = 2;
+  if (!this->_internal_location().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_location().data(), static_cast<int>(this->_internal_location().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "BookService.ReturnBook.location");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_location(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:BookService.ReturnBook)
+  return target;
+}
+
+size_t ReturnBook::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:BookService.ReturnBook)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string location = 2;
   if (!this->_internal_location().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_location());
   }
 
+  // .BookService.BookId bookId = 1;
+  if (this->_internal_has_bookid()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.bookid_);
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Location::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ReturnBook::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    Location::MergeImpl
+    ReturnBook::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Location::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ReturnBook::GetClassData() const { return &_class_data_; }
 
 
-void Location::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<Location*>(&to_msg);
-  auto& from = static_cast<const Location&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:BookService.Location)
+void ReturnBook::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ReturnBook*>(&to_msg);
+  auto& from = static_cast<const ReturnBook&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:BookService.ReturnBook)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -815,21 +1128,25 @@ void Location::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTO
   if (!from._internal_location().empty()) {
     _this->_internal_set_location(from._internal_location());
   }
+  if (from._internal_has_bookid()) {
+    _this->_internal_mutable_bookid()->::BookService::BookId::MergeFrom(
+        from._internal_bookid());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void Location::CopyFrom(const Location& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:BookService.Location)
+void ReturnBook::CopyFrom(const ReturnBook& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:BookService.ReturnBook)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool Location::IsInitialized() const {
+bool ReturnBook::IsInitialized() const {
   return true;
 }
 
-void Location::InternalSwap(Location* other) {
+void ReturnBook::InternalSwap(ReturnBook* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -838,12 +1155,13 @@ void Location::InternalSwap(Location* other) {
       &_impl_.location_, lhs_arena,
       &other->_impl_.location_, rhs_arena
   );
+  swap(_impl_.bookid_, other->_impl_.bookid_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata Location::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata ReturnBook::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_protobuf_2fBookLibraryService_2eproto_getter, &descriptor_table_protobuf_2fBookLibraryService_2eproto_once,
-      file_level_metadata_protobuf_2fBookLibraryService_2eproto[2]);
+      file_level_metadata_protobuf_2fBookLibraryService_2eproto[3]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -857,9 +1175,13 @@ template<> PROTOBUF_NOINLINE ::BookService::BookState*
 Arena::CreateMaybeMessage< ::BookService::BookState >(Arena* arena) {
   return Arena::CreateMessageInternal< ::BookService::BookState >(arena);
 }
-template<> PROTOBUF_NOINLINE ::BookService::Location*
-Arena::CreateMaybeMessage< ::BookService::Location >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::BookService::Location >(arena);
+template<> PROTOBUF_NOINLINE ::BookService::BookReservation*
+Arena::CreateMaybeMessage< ::BookService::BookReservation >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::BookService::BookReservation >(arena);
+}
+template<> PROTOBUF_NOINLINE ::BookService::ReturnBook*
+Arena::CreateMaybeMessage< ::BookService::ReturnBook >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::BookService::ReturnBook >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

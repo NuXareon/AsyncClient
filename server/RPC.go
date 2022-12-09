@@ -46,6 +46,26 @@ func (s *bookLibraryServer) GetBookStatus(ctx context.Context, bookId *pb.BookId
 	return &pb.BookState{}, status.Errorf(codes.NotFound, "Book Id not found.")
 }
 
+func (s *bookLibraryServer) MakeBookReservation(ctx context.Context, bookReservation *pb.BookReservation) (*pb.BookState, error) {
+	// Fake network conditions
+	time.Sleep(500 * time.Millisecond)
+
+	if bookStatus, found := s.bookStatus[bookReservation.BookId.Id]; found {
+		if bookStatus != pb.BookStateEnum_Available {
+			return &pb.BookState{State: bookStatus}, status.Errorf(codes.FailedPrecondition, "Invalid book state, a book needs to be avaible in order to be booked.")
+		}
+
+		s.bookStatus[bookReservation.BookId.Id] = pb.BookStateEnum_Reserved
+		s.bookUsers[bookReservation.BookId.Id] = bookReservation.User
+		bookUser := s.bookUsers[bookReservation.BookId.Id]
+		return &pb.BookState{State: s.bookStatus[bookReservation.BookId.Id], User: &bookUser }, nil
+	}
+
+	return &pb.BookState{}, status.Errorf(codes.NotFound, "Book Id not found.")
+}
+
+//ReturnBookReservation(context.Context, *ReturnBook) (*BookState, error)
+
 func (s *bookLibraryServer) initBookStatus(data map[string]bookData) {
 	for id := range data {
 		s.bookStatus[id] = pb.BookStateEnum_Available;

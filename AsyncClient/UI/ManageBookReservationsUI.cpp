@@ -59,6 +59,12 @@ Async::Task<bool> ManageBookReservationsUI::ProcessBookReservations()
         co_return false;
     }
 
+    // ReserveBook(id, username) - success
+    // ReserveBook(id, username) - success
+    // ReserveBook(id, username) - fail
+    // ReturnBook(id, city)
+    // Print
+
     for (auto& entry : bookStatusResult.mReturnValue)
     {
         PrintBookState(entry.first, entry.second);

@@ -23,7 +23,8 @@ namespace BookService {
 
 static const char* BookLibrary_method_names[] = {
   "/BookService.BookLibrary/GetBookStatus",
-  "/BookService.BookLibrary/GetAllBookLocations",
+  "/BookService.BookLibrary/MakeBookReservation",
+  "/BookService.BookLibrary/ReturnBookReservation",
 };
 
 std::unique_ptr< BookLibrary::Stub> BookLibrary::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -34,7 +35,8 @@ std::unique_ptr< BookLibrary::Stub> BookLibrary::NewStub(const std::shared_ptr< 
 
 BookLibrary::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_GetBookStatus_(BookLibrary_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetAllBookLocations_(BookLibrary_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_MakeBookReservation_(BookLibrary_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ReturnBookReservation_(BookLibrary_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status BookLibrary::Stub::GetBookStatus(::grpc::ClientContext* context, const ::BookService::BookId& request, ::BookService::BookState* response) {
@@ -60,20 +62,50 @@ void BookLibrary::Stub::async::GetBookStatus(::grpc::ClientContext* context, con
   return result;
 }
 
-::grpc::ClientReader< ::BookService::Location>* BookLibrary::Stub::GetAllBookLocationsRaw(::grpc::ClientContext* context, const ::BookService::BookId& request) {
-  return ::grpc::internal::ClientReaderFactory< ::BookService::Location>::Create(channel_.get(), rpcmethod_GetAllBookLocations_, context, request);
+::grpc::Status BookLibrary::Stub::MakeBookReservation(::grpc::ClientContext* context, const ::BookService::BookReservation& request, ::BookService::BookState* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::BookService::BookReservation, ::BookService::BookState, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_MakeBookReservation_, context, request, response);
 }
 
-void BookLibrary::Stub::async::GetAllBookLocations(::grpc::ClientContext* context, const ::BookService::BookId* request, ::grpc::ClientReadReactor< ::BookService::Location>* reactor) {
-  ::grpc::internal::ClientCallbackReaderFactory< ::BookService::Location>::Create(stub_->channel_.get(), stub_->rpcmethod_GetAllBookLocations_, context, request, reactor);
+void BookLibrary::Stub::async::MakeBookReservation(::grpc::ClientContext* context, const ::BookService::BookReservation* request, ::BookService::BookState* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::BookService::BookReservation, ::BookService::BookState, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_MakeBookReservation_, context, request, response, std::move(f));
 }
 
-::grpc::ClientAsyncReader< ::BookService::Location>* BookLibrary::Stub::AsyncGetAllBookLocationsRaw(::grpc::ClientContext* context, const ::BookService::BookId& request, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc::internal::ClientAsyncReaderFactory< ::BookService::Location>::Create(channel_.get(), cq, rpcmethod_GetAllBookLocations_, context, request, true, tag);
+void BookLibrary::Stub::async::MakeBookReservation(::grpc::ClientContext* context, const ::BookService::BookReservation* request, ::BookService::BookState* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_MakeBookReservation_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncReader< ::BookService::Location>* BookLibrary::Stub::PrepareAsyncGetAllBookLocationsRaw(::grpc::ClientContext* context, const ::BookService::BookId& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncReaderFactory< ::BookService::Location>::Create(channel_.get(), cq, rpcmethod_GetAllBookLocations_, context, request, false, nullptr);
+::grpc::ClientAsyncResponseReader< ::BookService::BookState>* BookLibrary::Stub::PrepareAsyncMakeBookReservationRaw(::grpc::ClientContext* context, const ::BookService::BookReservation& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::BookService::BookState, ::BookService::BookReservation, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_MakeBookReservation_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::BookService::BookState>* BookLibrary::Stub::AsyncMakeBookReservationRaw(::grpc::ClientContext* context, const ::BookService::BookReservation& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncMakeBookReservationRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status BookLibrary::Stub::ReturnBookReservation(::grpc::ClientContext* context, const ::BookService::ReturnBook& request, ::BookService::BookState* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::BookService::ReturnBook, ::BookService::BookState, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ReturnBookReservation_, context, request, response);
+}
+
+void BookLibrary::Stub::async::ReturnBookReservation(::grpc::ClientContext* context, const ::BookService::ReturnBook* request, ::BookService::BookState* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::BookService::ReturnBook, ::BookService::BookState, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ReturnBookReservation_, context, request, response, std::move(f));
+}
+
+void BookLibrary::Stub::async::ReturnBookReservation(::grpc::ClientContext* context, const ::BookService::ReturnBook* request, ::BookService::BookState* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ReturnBookReservation_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::BookService::BookState>* BookLibrary::Stub::PrepareAsyncReturnBookReservationRaw(::grpc::ClientContext* context, const ::BookService::ReturnBook& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::BookService::BookState, ::BookService::ReturnBook, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ReturnBookReservation_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::BookService::BookState>* BookLibrary::Stub::AsyncReturnBookReservationRaw(::grpc::ClientContext* context, const ::BookService::ReturnBook& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncReturnBookReservationRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 BookLibrary::Service::Service() {
@@ -89,13 +121,23 @@ BookLibrary::Service::Service() {
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       BookLibrary_method_names[1],
-      ::grpc::internal::RpcMethod::SERVER_STREAMING,
-      new ::grpc::internal::ServerStreamingHandler< BookLibrary::Service, ::BookService::BookId, ::BookService::Location>(
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< BookLibrary::Service, ::BookService::BookReservation, ::BookService::BookState, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](BookLibrary::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::BookService::BookId* req,
-             ::grpc::ServerWriter<::BookService::Location>* writer) {
-               return service->GetAllBookLocations(ctx, req, writer);
+             const ::BookService::BookReservation* req,
+             ::BookService::BookState* resp) {
+               return service->MakeBookReservation(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      BookLibrary_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< BookLibrary::Service, ::BookService::ReturnBook, ::BookService::BookState, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](BookLibrary::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::BookService::ReturnBook* req,
+             ::BookService::BookState* resp) {
+               return service->ReturnBookReservation(ctx, req, resp);
              }, this)));
 }
 
@@ -109,10 +151,17 @@ BookLibrary::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status BookLibrary::Service::GetAllBookLocations(::grpc::ServerContext* context, const ::BookService::BookId* request, ::grpc::ServerWriter< ::BookService::Location>* writer) {
+::grpc::Status BookLibrary::Service::MakeBookReservation(::grpc::ServerContext* context, const ::BookService::BookReservation* request, ::BookService::BookState* response) {
   (void) context;
   (void) request;
-  (void) writer;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status BookLibrary::Service::ReturnBookReservation(::grpc::ServerContext* context, const ::BookService::ReturnBook* request, ::BookService::BookState* response) {
+  (void) context;
+  (void) request;
+  (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 

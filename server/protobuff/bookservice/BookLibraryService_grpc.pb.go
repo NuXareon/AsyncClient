@@ -23,7 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookLibraryClient interface {
 	GetBookStatus(ctx context.Context, in *BookId, opts ...grpc.CallOption) (*BookState, error)
-	GetAllBookLocations(ctx context.Context, in *BookId, opts ...grpc.CallOption) (BookLibrary_GetAllBookLocationsClient, error)
+	MakeBookReservation(ctx context.Context, in *BookReservation, opts ...grpc.CallOption) (*BookState, error)
+	ReturnBookReservation(ctx context.Context, in *ReturnBook, opts ...grpc.CallOption) (*BookState, error)
 }
 
 type bookLibraryClient struct {
@@ -43,36 +44,22 @@ func (c *bookLibraryClient) GetBookStatus(ctx context.Context, in *BookId, opts 
 	return out, nil
 }
 
-func (c *bookLibraryClient) GetAllBookLocations(ctx context.Context, in *BookId, opts ...grpc.CallOption) (BookLibrary_GetAllBookLocationsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &BookLibrary_ServiceDesc.Streams[0], "/BookService.BookLibrary/GetAllBookLocations", opts...)
+func (c *bookLibraryClient) MakeBookReservation(ctx context.Context, in *BookReservation, opts ...grpc.CallOption) (*BookState, error) {
+	out := new(BookState)
+	err := c.cc.Invoke(ctx, "/BookService.BookLibrary/MakeBookReservation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &bookLibraryGetAllBookLocationsClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
 
-type BookLibrary_GetAllBookLocationsClient interface {
-	Recv() (*Location, error)
-	grpc.ClientStream
-}
-
-type bookLibraryGetAllBookLocationsClient struct {
-	grpc.ClientStream
-}
-
-func (x *bookLibraryGetAllBookLocationsClient) Recv() (*Location, error) {
-	m := new(Location)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
+func (c *bookLibraryClient) ReturnBookReservation(ctx context.Context, in *ReturnBook, opts ...grpc.CallOption) (*BookState, error) {
+	out := new(BookState)
+	err := c.cc.Invoke(ctx, "/BookService.BookLibrary/ReturnBookReservation", in, out, opts...)
+	if err != nil {
 		return nil, err
 	}
-	return m, nil
+	return out, nil
 }
 
 // BookLibraryServer is the server API for BookLibrary service.
@@ -80,7 +67,8 @@ func (x *bookLibraryGetAllBookLocationsClient) Recv() (*Location, error) {
 // for forward compatibility
 type BookLibraryServer interface {
 	GetBookStatus(context.Context, *BookId) (*BookState, error)
-	GetAllBookLocations(*BookId, BookLibrary_GetAllBookLocationsServer) error
+	MakeBookReservation(context.Context, *BookReservation) (*BookState, error)
+	ReturnBookReservation(context.Context, *ReturnBook) (*BookState, error)
 	mustEmbedUnimplementedBookLibraryServer()
 }
 
@@ -91,8 +79,11 @@ type UnimplementedBookLibraryServer struct {
 func (UnimplementedBookLibraryServer) GetBookStatus(context.Context, *BookId) (*BookState, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBookStatus not implemented")
 }
-func (UnimplementedBookLibraryServer) GetAllBookLocations(*BookId, BookLibrary_GetAllBookLocationsServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetAllBookLocations not implemented")
+func (UnimplementedBookLibraryServer) MakeBookReservation(context.Context, *BookReservation) (*BookState, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MakeBookReservation not implemented")
+}
+func (UnimplementedBookLibraryServer) ReturnBookReservation(context.Context, *ReturnBook) (*BookState, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReturnBookReservation not implemented")
 }
 func (UnimplementedBookLibraryServer) mustEmbedUnimplementedBookLibraryServer() {}
 
@@ -125,25 +116,40 @@ func _BookLibrary_GetBookStatus_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BookLibrary_GetAllBookLocations_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(BookId)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _BookLibrary_MakeBookReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BookReservation)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(BookLibraryServer).GetAllBookLocations(m, &bookLibraryGetAllBookLocationsServer{stream})
+	if interceptor == nil {
+		return srv.(BookLibraryServer).MakeBookReservation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/BookService.BookLibrary/MakeBookReservation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookLibraryServer).MakeBookReservation(ctx, req.(*BookReservation))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-type BookLibrary_GetAllBookLocationsServer interface {
-	Send(*Location) error
-	grpc.ServerStream
-}
-
-type bookLibraryGetAllBookLocationsServer struct {
-	grpc.ServerStream
-}
-
-func (x *bookLibraryGetAllBookLocationsServer) Send(m *Location) error {
-	return x.ServerStream.SendMsg(m)
+func _BookLibrary_ReturnBookReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReturnBook)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookLibraryServer).ReturnBookReservation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/BookService.BookLibrary/ReturnBookReservation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookLibraryServer).ReturnBookReservation(ctx, req.(*ReturnBook))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 // BookLibrary_ServiceDesc is the grpc.ServiceDesc for BookLibrary service.
@@ -157,13 +163,15 @@ var BookLibrary_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetBookStatus",
 			Handler:    _BookLibrary_GetBookStatus_Handler,
 		},
-	},
-	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GetAllBookLocations",
-			Handler:       _BookLibrary_GetAllBookLocations_Handler,
-			ServerStreams: true,
+			MethodName: "MakeBookReservation",
+			Handler:    _BookLibrary_MakeBookReservation_Handler,
+		},
+		{
+			MethodName: "ReturnBookReservation",
+			Handler:    _BookLibrary_ReturnBookReservation_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "protobuf/BookLibraryService.proto",
 }

@@ -6,7 +6,8 @@ option go_package = "protobuff/bookservice";
 
 service BookLibrary {
     rpc GetBookStatus(BookId) returns (BookState) {}
-    rpc GetAllBookLocations(BookId) returns (stream Location) {}
+    rpc MakeBookReservation(BookReservation) returns (BookState) {}
+    rpc ReturnBookReservation(ReturnBook) returns (BookState) {}
 }
 
 message BookId {
@@ -25,6 +26,12 @@ message BookState {
     optional string user = 3; // If Reserved: Who is the last person who reserved the book
 }
 
-message Location {
-    string location = 1;
+message BookReservation {
+    BookId bookId = 1;
+    string user = 2;
+}
+
+message ReturnBook {
+    BookId bookId = 1;
+    string location = 2;
 }

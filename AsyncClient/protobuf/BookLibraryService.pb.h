@@ -49,17 +49,21 @@ namespace BookService {
 class BookId;
 struct BookIdDefaultTypeInternal;
 extern BookIdDefaultTypeInternal _BookId_default_instance_;
+class BookReservation;
+struct BookReservationDefaultTypeInternal;
+extern BookReservationDefaultTypeInternal _BookReservation_default_instance_;
 class BookState;
 struct BookStateDefaultTypeInternal;
 extern BookStateDefaultTypeInternal _BookState_default_instance_;
-class Location;
-struct LocationDefaultTypeInternal;
-extern LocationDefaultTypeInternal _Location_default_instance_;
+class ReturnBook;
+struct ReturnBookDefaultTypeInternal;
+extern ReturnBookDefaultTypeInternal _ReturnBook_default_instance_;
 }  // namespace BookService
 PROTOBUF_NAMESPACE_OPEN
 template<> ::BookService::BookId* Arena::CreateMaybeMessage<::BookService::BookId>(Arena*);
+template<> ::BookService::BookReservation* Arena::CreateMaybeMessage<::BookService::BookReservation>(Arena*);
 template<> ::BookService::BookState* Arena::CreateMaybeMessage<::BookService::BookState>(Arena*);
-template<> ::BookService::Location* Arena::CreateMaybeMessage<::BookService::Location>(Arena*);
+template<> ::BookService::ReturnBook* Arena::CreateMaybeMessage<::BookService::ReturnBook>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace BookService {
 
@@ -439,24 +443,24 @@ class BookState final :
 };
 // -------------------------------------------------------------------
 
-class Location final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:BookService.Location) */ {
+class BookReservation final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:BookService.BookReservation) */ {
  public:
-  inline Location() : Location(nullptr) {}
-  ~Location() override;
-  explicit PROTOBUF_CONSTEXPR Location(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline BookReservation() : BookReservation(nullptr) {}
+  ~BookReservation() override;
+  explicit PROTOBUF_CONSTEXPR BookReservation(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  Location(const Location& from);
-  Location(Location&& from) noexcept
-    : Location() {
+  BookReservation(const BookReservation& from);
+  BookReservation(BookReservation&& from) noexcept
+    : BookReservation() {
     *this = ::std::move(from);
   }
 
-  inline Location& operator=(const Location& from) {
+  inline BookReservation& operator=(const BookReservation& from) {
     CopyFrom(from);
     return *this;
   }
-  inline Location& operator=(Location&& from) noexcept {
+  inline BookReservation& operator=(BookReservation&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -479,20 +483,20 @@ class Location final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const Location& default_instance() {
+  static const BookReservation& default_instance() {
     return *internal_default_instance();
   }
-  static inline const Location* internal_default_instance() {
-    return reinterpret_cast<const Location*>(
-               &_Location_default_instance_);
+  static inline const BookReservation* internal_default_instance() {
+    return reinterpret_cast<const BookReservation*>(
+               &_BookReservation_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     2;
 
-  friend void swap(Location& a, Location& b) {
+  friend void swap(BookReservation& a, BookReservation& b) {
     a.Swap(&b);
   }
-  inline void Swap(Location* other) {
+  inline void Swap(BookReservation* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -505,7 +509,7 @@ class Location final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(Location* other) {
+  void UnsafeArenaSwap(BookReservation* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -513,14 +517,14 @@ class Location final :
 
   // implements Message ----------------------------------------------
 
-  Location* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<Location>(arena);
+  BookReservation* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<BookReservation>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const Location& from);
+  void CopyFrom(const BookReservation& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const Location& from) {
-    Location::MergeImpl(*this, from);
+  void MergeFrom( const BookReservation& from) {
+    BookReservation::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -538,15 +542,15 @@ class Location final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(Location* other);
+  void InternalSwap(BookReservation* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "BookService.Location";
+    return "BookService.BookReservation";
   }
   protected:
-  explicit Location(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit BookReservation(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -560,9 +564,183 @@ class Location final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kLocationFieldNumber = 1,
+    kUserFieldNumber = 2,
+    kBookIdFieldNumber = 1,
   };
-  // string location = 1;
+  // string user = 2;
+  void clear_user();
+  const std::string& user() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_user(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_user();
+  PROTOBUF_NODISCARD std::string* release_user();
+  void set_allocated_user(std::string* user);
+  private:
+  const std::string& _internal_user() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user(const std::string& value);
+  std::string* _internal_mutable_user();
+  public:
+
+  // .BookService.BookId bookId = 1;
+  bool has_bookid() const;
+  private:
+  bool _internal_has_bookid() const;
+  public:
+  void clear_bookid();
+  const ::BookService::BookId& bookid() const;
+  PROTOBUF_NODISCARD ::BookService::BookId* release_bookid();
+  ::BookService::BookId* mutable_bookid();
+  void set_allocated_bookid(::BookService::BookId* bookid);
+  private:
+  const ::BookService::BookId& _internal_bookid() const;
+  ::BookService::BookId* _internal_mutable_bookid();
+  public:
+  void unsafe_arena_set_allocated_bookid(
+      ::BookService::BookId* bookid);
+  ::BookService::BookId* unsafe_arena_release_bookid();
+
+  // @@protoc_insertion_point(class_scope:BookService.BookReservation)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_;
+    ::BookService::BookId* bookid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_protobuf_2fBookLibraryService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ReturnBook final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:BookService.ReturnBook) */ {
+ public:
+  inline ReturnBook() : ReturnBook(nullptr) {}
+  ~ReturnBook() override;
+  explicit PROTOBUF_CONSTEXPR ReturnBook(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ReturnBook(const ReturnBook& from);
+  ReturnBook(ReturnBook&& from) noexcept
+    : ReturnBook() {
+    *this = ::std::move(from);
+  }
+
+  inline ReturnBook& operator=(const ReturnBook& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ReturnBook& operator=(ReturnBook&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ReturnBook& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ReturnBook* internal_default_instance() {
+    return reinterpret_cast<const ReturnBook*>(
+               &_ReturnBook_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(ReturnBook& a, ReturnBook& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ReturnBook* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ReturnBook* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ReturnBook* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ReturnBook>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ReturnBook& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const ReturnBook& from) {
+    ReturnBook::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ReturnBook* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "BookService.ReturnBook";
+  }
+  protected:
+  explicit ReturnBook(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kLocationFieldNumber = 2,
+    kBookIdFieldNumber = 1,
+  };
+  // string location = 2;
   void clear_location();
   const std::string& location() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -576,7 +754,25 @@ class Location final :
   std::string* _internal_mutable_location();
   public:
 
-  // @@protoc_insertion_point(class_scope:BookService.Location)
+  // .BookService.BookId bookId = 1;
+  bool has_bookid() const;
+  private:
+  bool _internal_has_bookid() const;
+  public:
+  void clear_bookid();
+  const ::BookService::BookId& bookid() const;
+  PROTOBUF_NODISCARD ::BookService::BookId* release_bookid();
+  ::BookService::BookId* mutable_bookid();
+  void set_allocated_bookid(::BookService::BookId* bookid);
+  private:
+  const ::BookService::BookId& _internal_bookid() const;
+  ::BookService::BookId* _internal_mutable_bookid();
+  public:
+  void unsafe_arena_set_allocated_bookid(
+      ::BookService::BookId* bookid);
+  ::BookService::BookId* unsafe_arena_release_bookid();
+
+  // @@protoc_insertion_point(class_scope:BookService.ReturnBook)
  private:
   class _Internal;
 
@@ -585,6 +781,7 @@ class Location final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr location_;
+    ::BookService::BookId* bookid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -820,44 +1017,278 @@ inline void BookState::set_allocated_user(std::string* user) {
 
 // -------------------------------------------------------------------
 
-// Location
+// BookReservation
 
-// string location = 1;
-inline void Location::clear_location() {
+// .BookService.BookId bookId = 1;
+inline bool BookReservation::_internal_has_bookid() const {
+  return this != internal_default_instance() && _impl_.bookid_ != nullptr;
+}
+inline bool BookReservation::has_bookid() const {
+  return _internal_has_bookid();
+}
+inline void BookReservation::clear_bookid() {
+  if (GetArenaForAllocation() == nullptr && _impl_.bookid_ != nullptr) {
+    delete _impl_.bookid_;
+  }
+  _impl_.bookid_ = nullptr;
+}
+inline const ::BookService::BookId& BookReservation::_internal_bookid() const {
+  const ::BookService::BookId* p = _impl_.bookid_;
+  return p != nullptr ? *p : reinterpret_cast<const ::BookService::BookId&>(
+      ::BookService::_BookId_default_instance_);
+}
+inline const ::BookService::BookId& BookReservation::bookid() const {
+  // @@protoc_insertion_point(field_get:BookService.BookReservation.bookId)
+  return _internal_bookid();
+}
+inline void BookReservation::unsafe_arena_set_allocated_bookid(
+    ::BookService::BookId* bookid) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.bookid_);
+  }
+  _impl_.bookid_ = bookid;
+  if (bookid) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:BookService.BookReservation.bookId)
+}
+inline ::BookService::BookId* BookReservation::release_bookid() {
+  
+  ::BookService::BookId* temp = _impl_.bookid_;
+  _impl_.bookid_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::BookService::BookId* BookReservation::unsafe_arena_release_bookid() {
+  // @@protoc_insertion_point(field_release:BookService.BookReservation.bookId)
+  
+  ::BookService::BookId* temp = _impl_.bookid_;
+  _impl_.bookid_ = nullptr;
+  return temp;
+}
+inline ::BookService::BookId* BookReservation::_internal_mutable_bookid() {
+  
+  if (_impl_.bookid_ == nullptr) {
+    auto* p = CreateMaybeMessage<::BookService::BookId>(GetArenaForAllocation());
+    _impl_.bookid_ = p;
+  }
+  return _impl_.bookid_;
+}
+inline ::BookService::BookId* BookReservation::mutable_bookid() {
+  ::BookService::BookId* _msg = _internal_mutable_bookid();
+  // @@protoc_insertion_point(field_mutable:BookService.BookReservation.bookId)
+  return _msg;
+}
+inline void BookReservation::set_allocated_bookid(::BookService::BookId* bookid) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.bookid_;
+  }
+  if (bookid) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(bookid);
+    if (message_arena != submessage_arena) {
+      bookid = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, bookid, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.bookid_ = bookid;
+  // @@protoc_insertion_point(field_set_allocated:BookService.BookReservation.bookId)
+}
+
+// string user = 2;
+inline void BookReservation::clear_user() {
+  _impl_.user_.ClearToEmpty();
+}
+inline const std::string& BookReservation::user() const {
+  // @@protoc_insertion_point(field_get:BookService.BookReservation.user)
+  return _internal_user();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void BookReservation::set_user(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.user_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:BookService.BookReservation.user)
+}
+inline std::string* BookReservation::mutable_user() {
+  std::string* _s = _internal_mutable_user();
+  // @@protoc_insertion_point(field_mutable:BookService.BookReservation.user)
+  return _s;
+}
+inline const std::string& BookReservation::_internal_user() const {
+  return _impl_.user_.Get();
+}
+inline void BookReservation::_internal_set_user(const std::string& value) {
+  
+  _impl_.user_.Set(value, GetArenaForAllocation());
+}
+inline std::string* BookReservation::_internal_mutable_user() {
+  
+  return _impl_.user_.Mutable(GetArenaForAllocation());
+}
+inline std::string* BookReservation::release_user() {
+  // @@protoc_insertion_point(field_release:BookService.BookReservation.user)
+  return _impl_.user_.Release();
+}
+inline void BookReservation::set_allocated_user(std::string* user) {
+  if (user != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.user_.SetAllocated(user, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.user_.IsDefault()) {
+    _impl_.user_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:BookService.BookReservation.user)
+}
+
+// -------------------------------------------------------------------
+
+// ReturnBook
+
+// .BookService.BookId bookId = 1;
+inline bool ReturnBook::_internal_has_bookid() const {
+  return this != internal_default_instance() && _impl_.bookid_ != nullptr;
+}
+inline bool ReturnBook::has_bookid() const {
+  return _internal_has_bookid();
+}
+inline void ReturnBook::clear_bookid() {
+  if (GetArenaForAllocation() == nullptr && _impl_.bookid_ != nullptr) {
+    delete _impl_.bookid_;
+  }
+  _impl_.bookid_ = nullptr;
+}
+inline const ::BookService::BookId& ReturnBook::_internal_bookid() const {
+  const ::BookService::BookId* p = _impl_.bookid_;
+  return p != nullptr ? *p : reinterpret_cast<const ::BookService::BookId&>(
+      ::BookService::_BookId_default_instance_);
+}
+inline const ::BookService::BookId& ReturnBook::bookid() const {
+  // @@protoc_insertion_point(field_get:BookService.ReturnBook.bookId)
+  return _internal_bookid();
+}
+inline void ReturnBook::unsafe_arena_set_allocated_bookid(
+    ::BookService::BookId* bookid) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.bookid_);
+  }
+  _impl_.bookid_ = bookid;
+  if (bookid) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:BookService.ReturnBook.bookId)
+}
+inline ::BookService::BookId* ReturnBook::release_bookid() {
+  
+  ::BookService::BookId* temp = _impl_.bookid_;
+  _impl_.bookid_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::BookService::BookId* ReturnBook::unsafe_arena_release_bookid() {
+  // @@protoc_insertion_point(field_release:BookService.ReturnBook.bookId)
+  
+  ::BookService::BookId* temp = _impl_.bookid_;
+  _impl_.bookid_ = nullptr;
+  return temp;
+}
+inline ::BookService::BookId* ReturnBook::_internal_mutable_bookid() {
+  
+  if (_impl_.bookid_ == nullptr) {
+    auto* p = CreateMaybeMessage<::BookService::BookId>(GetArenaForAllocation());
+    _impl_.bookid_ = p;
+  }
+  return _impl_.bookid_;
+}
+inline ::BookService::BookId* ReturnBook::mutable_bookid() {
+  ::BookService::BookId* _msg = _internal_mutable_bookid();
+  // @@protoc_insertion_point(field_mutable:BookService.ReturnBook.bookId)
+  return _msg;
+}
+inline void ReturnBook::set_allocated_bookid(::BookService::BookId* bookid) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.bookid_;
+  }
+  if (bookid) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(bookid);
+    if (message_arena != submessage_arena) {
+      bookid = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, bookid, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.bookid_ = bookid;
+  // @@protoc_insertion_point(field_set_allocated:BookService.ReturnBook.bookId)
+}
+
+// string location = 2;
+inline void ReturnBook::clear_location() {
   _impl_.location_.ClearToEmpty();
 }
-inline const std::string& Location::location() const {
-  // @@protoc_insertion_point(field_get:BookService.Location.location)
+inline const std::string& ReturnBook::location() const {
+  // @@protoc_insertion_point(field_get:BookService.ReturnBook.location)
   return _internal_location();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void Location::set_location(ArgT0&& arg0, ArgT... args) {
+void ReturnBook::set_location(ArgT0&& arg0, ArgT... args) {
  
  _impl_.location_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:BookService.Location.location)
+  // @@protoc_insertion_point(field_set:BookService.ReturnBook.location)
 }
-inline std::string* Location::mutable_location() {
+inline std::string* ReturnBook::mutable_location() {
   std::string* _s = _internal_mutable_location();
-  // @@protoc_insertion_point(field_mutable:BookService.Location.location)
+  // @@protoc_insertion_point(field_mutable:BookService.ReturnBook.location)
   return _s;
 }
-inline const std::string& Location::_internal_location() const {
+inline const std::string& ReturnBook::_internal_location() const {
   return _impl_.location_.Get();
 }
-inline void Location::_internal_set_location(const std::string& value) {
+inline void ReturnBook::_internal_set_location(const std::string& value) {
   
   _impl_.location_.Set(value, GetArenaForAllocation());
 }
-inline std::string* Location::_internal_mutable_location() {
+inline std::string* ReturnBook::_internal_mutable_location() {
   
   return _impl_.location_.Mutable(GetArenaForAllocation());
 }
-inline std::string* Location::release_location() {
-  // @@protoc_insertion_point(field_release:BookService.Location.location)
+inline std::string* ReturnBook::release_location() {
+  // @@protoc_insertion_point(field_release:BookService.ReturnBook.location)
   return _impl_.location_.Release();
 }
-inline void Location::set_allocated_location(std::string* location) {
+inline void ReturnBook::set_allocated_location(std::string* location) {
   if (location != nullptr) {
     
   } else {
@@ -869,12 +1300,14 @@ inline void Location::set_allocated_location(std::string* location) {
     _impl_.location_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:BookService.Location.location)
+  // @@protoc_insertion_point(field_set_allocated:BookService.ReturnBook.location)
 }
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

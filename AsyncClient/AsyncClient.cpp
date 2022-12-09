@@ -155,8 +155,6 @@ void ExecuteBookStatusExample()
 
     while (runSimulation)
     {
-        //grpc_return_type<getbookstatus_return> GetBookStatus(const std::vector<std::string>&ids)
-
         runSimulation &= bookUI.Tick(frameCount);
 
         // ~60fps (minus UI tick)
